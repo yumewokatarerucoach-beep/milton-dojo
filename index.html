@@ -1,5 +1,12 @@
 <meta charset="utf-8">
 <title>ミルトン道場</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2B4B8C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ミルトン道場">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 
 <style>
 :root{
@@ -1180,7 +1187,7 @@ function reviewHTML(models, point, p){
   const n = checked.filter(Boolean).length;
   const v = verdictOf(n);
   const glyph = { o:"◯", t:"△", x:"✕" }[v];
-  const label = { o:"通っている", t:"あと一歩", x:"組み直し" }[v];
+  const label = { o:"型に入っている", t:"あと一歩", x:"型から外れている" }[v];
   const desc = {
     o:"このまま口に馴染ませていきましょう。次へ。",
     t:"チェックが外れた項目を、もう一度声に出して直してみてください。",
@@ -1298,7 +1305,7 @@ function stackVerdictHTML(){
   const n = checked.filter(Boolean).length;
   const v = verdictOf(n);
   const glyph = { o:"◯", t:"△", x:"✕" }[v];
-  const label = { o:"3文がつながった", t:"どこか1文が浮いている", x:"組み直し" }[v];
+  const label = { o:"3文がつながった", t:"どこか1文が浮いている", x:"型から外れている" }[v];
   const desc = {
     o:"この流れを、通しでもう一度声に出してから次へ。",
     t:"外れた項目の文だけ書き直して、また3文を通しで読んでみてください。",
@@ -1429,7 +1436,7 @@ function metaVerdictHTML(){
   const n = checked.filter(Boolean).length;
   const v = verdictOf(n);
   const glyph = { o:"◯", t:"△", x:"✕" }[v];
-  const label = { o:"回復できている", t:"あと一歩", x:"問い直し" }[v];
+  const label = { o:"回復できている", t:"あと一歩", x:"型から外れている" }[v];
   const desc = {
     o:"この質問なら、クライアントの中で情報が戻ります。次へ。",
     t:"外れた項目を見直して、もう一度声に出して言い換えてみてください。",

@@ -1,0 +1,26 @@
+{
+  "name": "ミルトン道場",
+  "short_name": "ミルトン道場",
+  "description": "ミルトンモデルとメタモデルの実践ドリル",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#EDEFF4",
+  "theme_color": "#2B4B8C",
+  "lang": "ja",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
