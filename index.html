@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ミルトン道場</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#2B4B8C">
@@ -49,7 +50,7 @@
 *{box-sizing:border-box}
 /* 文字サイズ：基準は端末幅で CSS が決め、--fs-scale（ユーザー設定）を掛ける */
 html{font-size:calc(16px * var(--fs-scale, 1))}
-@media (max-width:640px){html{font-size:calc(20px * var(--fs-scale, 1))}}   /* スマホは初めから大きめ */
+@media (max-width:640px){html{font-size:calc(21px * var(--fs-scale, 1))}}   /* スマホは初めから大きめ */
 body{
   margin:0; background:var(--ground); color:var(--ink);
   font-family:var(--sans); font-size:1rem; line-height:1.78;
@@ -917,7 +918,7 @@ function load(){
       const o = JSON.parse(raw);
       if(Array.isArray(o.records)) store.records = o.records.slice(-MAX_RECORDS);
       if(typeof o.timer === "number") store.timer = o.timer;
-      if(typeof o.fs === "number" && o.fs > 0.5 && o.fs < 2) store.fs = o.fs;
+      if(typeof o.fs === "number" && o.fs > 0.5 && o.fs < 2) store.fs = (o.fs === 1.28 ? 1.33 : o.fs === 0.9 ? 0.88 : o.fs === 1.13 ? 1.15 : o.fs);
       if(["intro","normal","real"].includes(o.level)) store.level = o.level;
     }
   }catch(e){ /* 使えない環境でもドリルは動く */ }
@@ -1164,10 +1165,11 @@ function homeHTML(){
       <div class="setrow">
         <span class="eyebrow">文字サイズ</span>
         <div class="seg" id="segfont">
-          <button type="button" data-f="0.9" aria-pressed="${store.fs===0.9}">小</button>
+          <button type="button" data-f="0.88" aria-pressed="${store.fs===0.88}">小</button>
           <button type="button" data-f="1"    aria-pressed="${store.fs===1}">標準</button>
-          <button type="button" data-f="1.13" aria-pressed="${store.fs===1.13}">大</button>
-          <button type="button" data-f="1.28" aria-pressed="${store.fs===1.28}">特大</button>
+          <button type="button" data-f="1.15" aria-pressed="${store.fs===1.15}">大</button>
+          <button type="button" data-f="1.33" aria-pressed="${store.fs===1.33}">特大</button>
+          <button type="button" data-f="1.55" aria-pressed="${store.fs===1.55}">最大</button>
         </div>
       </div>
       <p class="note" style="margin:0">本番は考える時間がありません。慣れてきたら15秒に落として、反射で出るところまで持っていきます。（連結ドリルでは使いません）</p>
@@ -1181,7 +1183,7 @@ function homeHTML(){
     <div class="foot">
       <p class="note" style="margin:0">
         <b>記録はこの端末の中だけに保存されます。</b>
-        外部に送信するものは何もありません。保存されるのはパターン名と ◯△✕ の判定だけで、
+        外部に送信するものは何もありません。サーバーには何も残りません。保存されるのはパターン名とふりかえりの結果だけで、
         <b>あなたが書いた文章は保存されません。</b>
       </p>
       <p class="note" style="margin:0">
