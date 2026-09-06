@@ -159,6 +159,13 @@ button{font-family:inherit}
 .progress i.done{background:var(--good)} .progress i.now{background:var(--accent)}
 .alsobox{font-size:.9rem; color:var(--ink-2); line-height:1.75; background:var(--surface-2); border-radius:9px; padding:11px 13px}
 .alsobox b{color:var(--ink)}
+.premise{margin:0; font-size:.88rem; color:var(--ink-3); line-height:1.75; text-align:center; padding:2px 8px}
+.premise span{display:block; font-size:.85em; opacity:.8; margin-top:2px}
+.termbox{background:var(--surface-2); border-radius:10px; padding:13px 15px; font-size:.9rem; line-height:1.85; color:var(--ink-2)}
+.termbox b{color:var(--ink)}
+.termbtn{background:none; border:0; padding:0; color:var(--accent); font-family:inherit; font-size:.86rem;
+  cursor:pointer; text-decoration:underline; text-underline-offset:3px; align-self:flex-start}
+.termbtn:hover{color:var(--accent-ink)}
 .lvnote{font-size:.85rem; color:var(--ink-3); line-height:1.7}
 .mictip{font-size:.86rem; color:var(--ink-3); line-height:1.75; padding:2px 0 2px 13px; border-left:2px solid var(--line)}
 .mictip b{color:var(--ink-2); font-weight:700}
@@ -232,7 +239,7 @@ details.ref .body .wy{font-size:.89rem; color:var(--ink-3); line-height:1.75}
 .statrow .ct{font-family:var(--mono); font-size:.81rem; color:var(--ink-3); font-variant-numeric:tabular-nums}
 .statrow .track{grid-column:1/3; height:6px; border-radius:999px; background:var(--line-soft); display:flex; overflow:hidden}
 .statrow .track i{display:block; height:100%}
-.statrow .track .o{background:var(--good)} .statrow .track .t{background:var(--mid)} .statrow .track .x{background:var(--weak)}
+.statrow .track .o{background:var(--good)} .statrow .track .t{background:var(--mid)} .statrow .track .x{background:var(--line)}
 .weak-tags{display:flex; gap:7px; flex-wrap:wrap; margin-top:4px}
 .weak-tags span{font-size:.85rem; padding:4px 10px; border-radius:999px; background:var(--weak-soft); color:var(--weak); font-weight:500}
 .empty{font-size:.92rem; color:var(--ink-3); line-height:1.8}
@@ -262,6 +269,7 @@ const PATTERNS = [
     ex:"あなたの中の<b>変化</b>が、静かに始まっています。",
     why:"名詞の中身が空っぽだから、相手の脳が自分の記憶から一番ふさわしいものを探して埋める（TDサーチ）。",
     scaffold:"〔相手の状況〕の中に、あなたの〈○○〉が、もう始まっています。<br><span class=\"sk\">〈○○〉に入れる名詞 … 変化／気づき／答え／準備／力／基準</span>",
+    term:"<b>名詞化</b>とは、動詞（〜する）を名詞（〜すること・〜さ）に変えること。「決める」→「決断力」、「変わる」→「変化」。名詞にすると、動きが止まった“物”のように扱えます。ミルトンモデルでは、その物の中身をあえて空っぽのままにします。",
     checks:["中身を言わずに、名詞（変化・気づき・答え・力…）で置けているか",
             "その名詞を、相手が自分の中身で埋められる余白があるか",
             "曖昧にしすぎて、何の話か分からなくなっていないか"] },
@@ -270,6 +278,7 @@ const PATTERNS = [
     ex:"人は誰でも、深い<b>リソース</b>を持っています。",
     why:"特定されていないから否定できず、相手は「自分のこと」として受け取る。",
     scaffold:"人は誰でも、〔誰も否定できない一般則〕ものです。<br><span class=\"sk\">主語を「人は誰でも」「多くの方が」に上げるのがコツ</span>",
+    term:"<b>指示詞</b>とは「これ」「あの人」のように、何を指すかを示す言葉。それを<b>不特定</b>にする、つまり「人は誰でも」「あるもの」のように、誰・何かを特定しないまま話す技術です。（本によっては「不特定名詞」とも呼ばれます）",
     checks:["主語を特定しない形（人は誰でも／多くの方が）になっているか",
             "対象（リソース・もの・場所）も特定せずに置けているか",
             "一般論が浮かず、相手の話とつながって聞こえるか"] },
@@ -278,6 +287,7 @@ const PATTERNS = [
     ex:"その体験が、あなたを素晴らしい場所へ<b>導きます</b>。",
     why:"手順が空白だから、相手が自分に合ったやり方を無意識で補完する。",
     scaffold:"〔その体験・その感覚〕が、あなたを、〈○○〉いきます。<br><span class=\"sk\">〈○○〉に入れる動詞 … 導いて／進めて／整えて／ほどいて／連れて</span>",
+    term:"<b>不特定動詞</b>とは、やり方が入っていない動詞のこと。「導く」「進む」「整う」。動詞なのに「どうやって」が空っぽなので、聞き手が自分のやり方で埋めます。",
     checks:["やり方を言わない動詞（導く・進む・整う・始まる）を使っているか",
             "具体的な手順や方法を言っていないか",
             "主語を相手の体験や無意識の側に置けているか"] },
@@ -286,6 +296,7 @@ const PATTERNS = [
     ex:"あなたは私の声を聞いています。<b>そして</b>、ゆっくりリラックスできます。",
     why:"脳がAを真実と認めているので、つながれたBも真実として通る（ヘッブの法則）。",
     scaffold:"今、〔今この瞬間の否定できない事実〕。<b>そして</b>、〔誘導したいステイト〕。",
+    term:"<b>ペーシング</b>＝相手の“いま”に歩調を合わせること。<b>リーディング</b>＝そこから望む方向へ連れていくこと。接続詞は、その二つをつなぐ橋です。「そして」は因果を主張しないので、いちばん抵抗が出にくい形。",
     checks:["前半が、今この瞬間の否定できない客観的事実になっているか",
             "「そして」など弱い接続でつないでいるか（因果を主張していないか）",
             "後半が、誘導したいステイトになっているか"] },
@@ -294,6 +305,7 @@ const PATTERNS = [
     ex:"深く深呼吸を<b>しながら</b>、トランスに入り始めます。",
     why:"時間の重なりで結ぶと、二つが同じ流れの中の出来事として処理される。",
     scaffold:"〔今起きている事実〕<b>しながら</b>、〔誘導したいステイト〕。<br><span class=\"sk\">「〜するとき」「〜している間に」でも可</span>",
+    term:"「〜しながら」で、二つを<b>同じ時間の中</b>に重ねる形。脳は、同時に起きていることとして一緒に処理します。",
     checks:["前半が、今まさに起きている事実か",
             "時間の重なり（〜しながら／〜するとき）でつないでいるか",
             "後半が誘導で、しかも押しつけになっていないか"] },
@@ -302,6 +314,7 @@ const PATTERNS = [
     ex:"呼吸を深くする<b>たびに</b>、あなたの心がさらに静まります。",
     why:"因果で結ぶと、事実が起きるたびに誘導が自動発火する回路になる。",
     scaffold:"〔今起きている事実〕<b>するたびに</b>、〔誘導したいステイト〕。<br><span class=\"sk\">「だからこそ」「〜すればするほど」でも可</span>",
+    term:"原因と結果で結ぶ形。「〜するたびに」は、その事実が起きるたびに誘導が自動で発火する回路をつくります（ヘッブの法則：一緒に発火した神経はつながる）。",
     checks:["前半が、今この瞬間の否定できない事実か（推測や決めつけが混ざっていないか）",
             "接続が因果の強さか（〜するたびに／だからこそ／〜すればするほど）",
             "後半が誘導したいステイトで、かつ曖昧（名詞化）になっているか"] },
@@ -310,6 +323,7 @@ const PATTERNS = [
     ex:"人は、いつでも新しいことを学ぶことができます。",
     why:"「はい」の構えが積み重なると、次の暗示も同じ構えで受け取られる。",
     scaffold:"人は、〔誰も否定できない普遍的な事実〕ものです。<br><span class=\"sk\">反論の余地がゼロかどうかで判定する</span>",
+    term:"<b>トゥルイズム</b>（truism）とは「自明の理」。誰が聞いても否定しようのない当たり前のこと。「はい」が自然に出るので、次の言葉も同じ構えで受け取られます。",
     checks:["誰も否定できない普遍的な事実になっているか（反論の余地がないか）",
             "相手の話とつながって聞こえるか（脈絡なく浮いていないか）",
             "断定が強すぎず、「はい」が自然に出る形か"] },
@@ -318,6 +332,7 @@ const PATTERNS = [
     ex:"セッションを終えた<b>あとに</b>、どんな変化を実感し始めるのか楽しみです。",
     why:"問われているのは「どんな」であって「するかどうか」ではない。前提は検証されずに通る。",
     scaffold:"〔変化〕した<b>あとで</b>、〔別のこと〕はどうなっているでしょうね。<br><span class=\"sk\">「もし〜なら」にすると前提が壊れる</span>",
+    term:"<b>前提</b>（presupposition）とは、文の中に「すでに決まったこと」として滑り込ませる技術。「〜したあとで」の形にすると、“するかどうか”がそもそも問われなくなります。",
     checks:["変化が起こることが「前提」として埋め込まれているか",
             "「もし〜なら」で条件にしていないか（条件化すると前提が壊れる）",
             "時の従属節（〜したあとで／〜するとき／〜する前に）が使えているか"] },
@@ -326,6 +341,7 @@ const PATTERNS = [
     ex:"新しい一歩を踏み出すのは、今週末からにしますか？ それとも来週からにしますか？",
     why:"選ぶ対象が「やるか否か」から「いつ・どちらから」へすり替わる。",
     scaffold:"〔行動〕は、〔選択肢A〕にしますか？ それとも〔選択肢B〕にしますか？<br><span class=\"sk\">どちらも実行できる小ささにそろえる</span>",
+    term:"<b>ダブルバインド</b>（double bind）＝二重拘束。どちらを選んでも同じ方向へ進む二者択一。選ぶ対象が「やるか否か」から「どちらか」にすり替わります。",
     checks:["二者択一の形になっているか",
             "どちらを選んでも望ましい方向へ向かうか",
             "選ぶ自由が残って聞こえるか（押しつけになっていないか）"] },
@@ -334,6 +350,7 @@ const PATTERNS = [
     ex:"まだ、すべてを理解しようと<b>思わなくていい</b>ですよ。",
     why:"脳は否定形を処理する前に、一度その中身を描いてしまう（赤いリンゴ現象）。",
     scaffold:"まだ、〔してほしいこと〕と<b>思わなくていい</b>ですよ。<br><span class=\"sk\">否定の中身が、実は描かせたいイメージ</span>",
+    term:"してほしいことを、あえて否定形で言う技術。脳は否定を処理する前に、一度その中身を思い浮かべてしまいます（「赤いリンゴを想像しないで」と言われると想像してしまう現象）。",
     checks:["「〜しなくていい」「〜と思わなくていい」の形になっているか",
             "否定している中身が、実は相手に描かせたいイメージか",
             "命令口調が強すぎて、指示に聞こえていないか"] },
@@ -342,6 +359,7 @@ const PATTERNS = [
     ex:"今日ここに来てくださったこと自体が、あなたが <b>変わり始めている</b> という証拠です。",
     why:"文全体は意識が処理し、マークされた部分だけが独立した命令として無意識に届く。",
     scaffold:"文はそのままに、〔相手にしてほしい状態〕だけを <code>*〜*</code> で囲む。<br><span class=\"sk\">1文に1〜2か所まで</span>",
+    term:"<b>アナログ</b>＝言葉以外の要素（声のトーン・間・視線）。それで<b>マーキング</b>（印をつける）こと。文の一部だけ声を落とすと、そこが独立した命令として無意識に届きます。",
     checks:["相手にしてほしい状態そのものにマークが付いているか",
             "マークが多すぎないか（1文に1〜2か所まで）",
             "実際に、そこだけ声を落としてゆっくり言ってみたか"] }
@@ -703,72 +721,84 @@ const META = [
   { id:"m01", no:"01", name:"単純削除", cat:"削除",
     def:"重要な情報が完全に失われている。何に対してか、何がかが消えている。",
     ask:"「何に対して〜ですか？」「具体的に何が〜ですか？」",
+    term:"<b>単純削除</b>とは、文から情報がまるごと抜け落ちている状態。「不安です」— 何に対して？ が消えています。",
     checks:["消えている対象を「何に対して？」「何が？」と尋ねているか",
             "相手の言葉（不安・つらい など）をそのまま使って返しているか",
             "「なぜ」で理由を聞いていないか"] },
   { id:"m02", no:"02", name:"比較削除", cat:"削除",
     def:"評価や比較の基準（何と比べてか）が省略されている。",
     ask:"「何と比べてですか？」「何を基準に、そう判断していますか？」",
+    term:"<b>比較削除</b>とは、比べているのに比べる相手が消えている状態。「もっといい」「優れている」— 何と比べて？",
     checks:["「何と比べて？」「何を基準に？」と、比較の相手を尋ねているか",
             "相手が使った比較語（もっと・より・優れた）を拾って返しているか",
             "評価そのものを否定していないか"] },
   { id:"m03", no:"03", name:"指示詞の欠如", cat:"削除",
     def:"主語や対象となる人・ものが不明確。受け身の文で消えることが多い。",
     ask:"「具体的に、どなたのことですか？」「誰に、ですか？」",
+    term:"<b>指示詞</b>＝何を指すかを示す言葉。その<b>欠如</b>とは「誰が」「誰に」が消えている状態。とくに受け身（〜される）で消えやすい。",
     checks:["「具体的に誰が／誰に？」と、消えた人・ものを尋ねているか",
             "受け身の文から、行為をした人を戻そうとしているか",
             "詰問にならない柔らかさが保てているか"] },
   { id:"m04", no:"04", name:"不特定動詞", cat:"削除",
     def:"行為のプロセスや詳細が削除されている。どうやって、がない。",
     ask:"「具体的に、どのようにしてですか？」「それは、どうなることですか？」",
+    term:"<b>不特定動詞</b>とは、やり方が入っていない動詞。「否定される」「空回りする」— 具体的にどうすること？ が抜けています。",
     checks:["「具体的にどうやって？」「どうなること？」と、プロセスを尋ねているか",
             "相手が使った動詞をそのまま拾って返しているか",
             "自分の解釈で言い換えてしまっていないか"] },
   { id:"m05", no:"05", name:"名詞化", cat:"歪曲",
     def:"動詞（進行中のプロセス）が名詞（固定された物）になり、変えられないように見えている。",
     ask:"「具体的に、いま何を〜しようとして、迷っているのですか？」（動詞に戻す）",
+    term:"<b>名詞化</b>とは、動詞を名詞に変えて、変えられない“物”のようにしてしまう歪み。「決める」→「決断力がない」。ミルトンモデルでは、これをわざと使います。",
     checks:["名詞（決断力・不安・安定）を、動詞に戻して尋ねているか",
             "「いま何を〜しようとしているのか」と、進行中の行為として聞けているか",
             "名詞のまま議論してしまっていないか"] },
   { id:"m06", no:"06", name:"複合等価", cat:"歪曲",
     def:"A（事実）＝ B（意味）という、時間も文脈もない不合理な等式。",
     ask:"「その二つは、どのようにして同じ意味になるのですか？」",
+    term:"<b>複合等価</b>とは、A＝B と結びつけること。「遅刻する＝私を軽視している」。二つの間に、本当は何の必然もありません。",
     checks:["「どのようにして同じ意味になるのですか？」と、等式そのものを尋ねているか",
             "AとBを、相手の言葉のまま並べて返しているか",
             "「それは違います」と否定していないか"] },
   { id:"m07", no:"07", name:"因果関係", cat:"歪曲",
     def:"外の出来事が、自分の感情や行動を引き起こすという歪んだ因果。主導権が相手側にある。",
     ask:"「それは、どのようなプロセスで、あなたを〜させるのですか？」",
+    term:"<b>因果関係</b>の歪みとは、外の出来事が自分の感情を直接つくると考えること。「彼の一言が私を怒らせる」。主導権が相手側に渡っています。",
     checks:["「どのようなプロセスで？」と、AからBへの経路を尋ねているか",
             "相手に主導権が戻る向きの問いになっているか",
             "相手の感情そのものを否定していないか"] },
   { id:"m08", no:"08", name:"マインド・リーディング", cat:"歪曲",
     def:"証拠がないのに、他者の内面や考えを分かっていると思い込んでいる。",
     ask:"「どのようにして、そう分かったのですか？」「具体的な証拠は？」",
+    term:"<b>マインド・リーディング</b>とは、証拠なしに相手の心の中が分かると思い込むこと。「きっと嫌われている」。",
     checks:["「どのようにして、そう分かったのですか？」と根拠を尋ねているか",
             "相手が見た・聞いた具体的な事実に向かっているか",
             "「それは思い込みです」と決めつけていないか"] },
   { id:"m09", no:"09", name:"ロスト・パフォーマティブ", cat:"歪曲",
     def:"主張や価値判断の出所（誰がそう言ったか）が消えた「世界のルール」。",
     ask:"「それは、誰が言っていることですか？」「どんな基準で、そう決まっているのですか？」",
+    term:"<b>パフォーマティブ</b>（performative）＝「そう言った人」。それが<b>ロスト</b>＝失われた状態。「〜すべきだ」「〜が常識だ」— 誰が言った？ が消えたルールです。",
     checks:["「それは誰が言っていることですか？」と出所を尋ねているか",
             "「どんな基準で？」とルールの根拠に触れているか",
             "そのルール自体を否定していないか"] },
   { id:"m10", no:"10", name:"全称限定詞", cat:"一般化",
     def:"いつも・誰も・みんな・何も。例外や選択肢をすべて排除する言葉。",
     ask:"「いつもですか？ 一度も〜はありませんでしたか？」（例外を一つ探す）",
+    term:"<b>全称限定詞</b>（universal quantifier）とは、「いつも」「誰も」「みんな」「何も」のように、例外をゼロにしてしまう言葉。",
     checks:["相手の言葉（いつも・誰も・みんな）をそのまま返して確かめているか",
             "「一度も？」と、例外を一つ探しにいっているか",
             "反論ではなく、確認の口調になっているか"] },
   { id:"m11", no:"11", name:"必要性のモダルオペレーター", cat:"一般化",
     def:"〜せねば、〜しなければならない。選択肢がないことを暗示する言葉。",
     ask:"「もし、しなかったとしたら、何が起こりますか？」",
+    term:"<b>モダルオペレーター</b>（modal operator）＝話法の助動詞。そのうち行動の<b>必要性</b>を決める言葉（〜ねばならない／〜すべき）。選択肢がないように感じさせます。",
     checks:["「もし〜しなかったら、何が起こりますか？」と結果を尋ねているか",
             "義務そのものを否定せずに聞けているか",
             "「なぜ」を使っていないか"] },
   { id:"m12", no:"12", name:"可能性のモダルオペレーター", cat:"一般化",
     def:"〜できない、無理、わけがない。自分の可能性を閉ざす言葉。",
     ask:"「何が、あなたを止めているのですか？」「もし可能だとしたら？」",
+    term:"同じく<b>モダルオペレーター</b>のうち、<b>可能性</b>を決める言葉（〜できない／無理／わけがない）。能力の問題に見えて、たいていは「自分に許可していない」だけです。",
     checks:["「何があなたを止めているのですか？」と障害を尋ねているか",
             "「もし可能だとしたら？」と仮定で扉を開けているか",
             "「できますよ」と励ましで押していないか"] }
@@ -933,11 +963,28 @@ const LEVELS = {
 };
 const LV = () => LEVELS[store.level] || LEVELS.normal;
 
-/* チェックの数から判定を出す。入門だけ基準を緩める */
-function verdictOf(n){
-  if(store.level === "intro") return n >= 2 ? "o" : n >= 1 ? "t" : "x";
-  return n === 3 ? "o" : n === 2 ? "t" : "x";
+/* ここは「採点」ではなく「フィードバック」。うまくいかない出し方は返さない。
+   NLPの前提6「失敗はない、あるのはフィードバックだけ」に合わせている。 */
+function feedbackOf(n){
+  const lv = store.level || "normal";
+  let key;
+  if(lv === "real")      key = n >= 3 ? "ex" : n >= 2 ? "good" : n >= 1 ? "some" : "start";
+  else if(lv === "intro")key = n >= 2 ? "ex" : n >= 1 ? "good" : "start";
+  else                   key = n >= 3 ? "ex" : n >= 1 ? "good" : "start";
+  return FB[key];
 }
+const FB = {
+  ex:    { key:"ex",    bucket:"o", glyph:"◎", cls:"v-o",
+           label:"しっかり入っている", desc:"この感覚を覚えておいてください。次へ。" },
+  good:  { key:"good",  bucket:"o", glyph:"○", cls:"v-o",
+           label:"型は入っている", desc:"通じます。もう一つ足すと、さらに効きます。" },
+  some:  { key:"some",  bucket:"t", glyph:"△", cls:"v-t",
+           label:"使えている", desc:"方向は合っています。外れた項目を一つだけ足してみて。" },
+  start: { key:"start", bucket:"t", glyph:"・", cls:"v-t",
+           label:"まず、使ってみた", desc:"型を使おうとしたこと自体が前進です。模範解答を一度、声に出してみてください。" }
+};
+/* 記録に積む値。失敗という区分は作らない */
+function verdictOf(n){ return feedbackOf(n).bucket; }
 
 /* ===================== 状態 ===================== */
 let view = "home";
@@ -951,7 +998,8 @@ let picked = null;        // 選んだメタモデルのパターン
 let cur = null;           // 現在の設問
 let checked = [false,false,false];
 let revealed = false;
-let hintOn = false;      // ヒントを開いているか
+let hintOn = false;
+let termOn = false;      // 言葉の意味を開いているか      // ヒントを開いているか
 let shakyoOn = false;    // 写経モードか
 let recent = [];          // 直近に出した設問（重複回避）
 let tick = null, left = 0, total = 0, expired = false, deadline = 0;
@@ -989,7 +1037,7 @@ function start(m, weak){
   cur = m === "stack" ? pickStack() : pickSingle(weakMode);
   checked = [false,false,false];
   revealed = false; expired = false;
-  hintOn = false; shakyoOn = false;
+  hintOn = false; shakyoOn = false; termOn = false;
   view = "drill";
   render();
   startTimer();
@@ -1027,6 +1075,12 @@ function hintHTML(pat){
     return `<div class="hintbox"><span class="lbl">型の骨組み</span><div class="bd">${pat.scaffold}</div></div>`;
   }
   return `<button class="btn ghost sm" id="hintbtn" type="button">ヒントを見る（型の骨組み）</button>`;
+}
+/* パターン名そのものの意味。入門では最初から開いておく */
+function termHTML(pat){
+  if(!pat || !pat.term) return "";
+  if(LV().hint === "always" || termOn) return `<div class="termbox">${pat.term}</div>`;
+  return `<button class="termbtn" id="termbtn" type="button">「${esc(pat.name)}」って、どういう言葉？</button>`;
 }
 function shakyoBtnHTML(){
   return LV().shakyo ? `<button class="btn ghost sm" id="shakyobtn" type="button">先に模範解答を見て写経する</button>` : "";
@@ -1083,7 +1137,7 @@ function homeHTML(){
       </button>
       <button class="mode" data-go="weak" type="button">
         <span class="mk">W</span><b>弱点優先</b>
-        <span>${total ? `記録から苦手なパターンを優先して出します。いま弱いのは ${esc(weak.join(" / "))}。` : "まだ記録がないので、まずは未着手のパターンから出します。"}</span>
+        <span>${total ? `手が薄いパターンから優先して出します。次に伸びるのは ${esc(weak.join(" / "))}。` : "まだ記録がないので、まずは未着手のパターンから出します。"}</span>
       </button>
     </div>
 
@@ -1165,6 +1219,7 @@ function singleHTML(){
       <div class="form">${task}</div>
       <div class="form" style="color:var(--ink-3)">型：${p.form}</div>
     </div>
+    ${revealed || shakyoOn ? "" : termHTML(p)}
 
     ${shakyoOn ? shakyoHTML(d.models) : ""}
 
@@ -1185,14 +1240,7 @@ function singleHTML(){
 
 function reviewHTML(models, point, p){
   const n = checked.filter(Boolean).length;
-  const v = verdictOf(n);
-  const glyph = { o:"◯", t:"△", x:"✕" }[v];
-  const label = { o:"型に入っている", t:"あと一歩", x:"型から外れている" }[v];
-  const desc = {
-    o:"このまま口に馴染ませていきましょう。次へ。",
-    t:"チェックが外れた項目を、もう一度声に出して直してみてください。",
-    x:"模範解答をそのまま3回、声に出して読んでから次へ進んでください。"
-  }[v];
+  const fb = feedbackOf(n);
   return `
     <hr class="hr">
     <div class="model">
@@ -1202,7 +1250,7 @@ function reviewHTML(models, point, p){
     </div>
 
     <div>
-      <p class="eyebrow" style="margin:0 0 9px">自己採点 — 当てはまるものをタップ</p>
+      <p class="eyebrow" style="margin:0 0 9px">ふりかえり — 入っていたものをタップ</p>
       <div class="checks">
         ${p.checks.map((c,i) => `
           <button class="chk" type="button" data-chk="${i}" aria-pressed="${checked[i]}">
@@ -1212,9 +1260,10 @@ function reviewHTML(models, point, p){
     </div>
 
     <div class="verdict">
-      <span class="g v-${v}">${glyph}</span>
-      <span class="t"><b>${label}</b>${desc}</span>
+      <span class="g ${fb.cls}">${fb.glyph}</span>
+      <span class="t"><b>${fb.label}</b>${fb.desc}</span>
     </div>
+    ${fb.key === "start" ? `<p class="premise">失敗はありません。あるのはフィードバックだけです。<span>— NLPの前提より</span></p>` : ""}
 
     <div class="btnrow">
       <button class="btn" id="nextq" type="button">記録して次へ</button>
@@ -1264,7 +1313,7 @@ function stackHTML(){
       <div class="point"><b>ポイント：</b>${s.point}</div>
 
       <div>
-        <p class="eyebrow" style="margin:0 0 9px">自己採点 — 当てはまるものをタップ</p>
+        <p class="eyebrow" style="margin:0 0 9px">ふりかえり — 入っていたものをタップ</p>
         <div class="checks">
           ${q.checks.map((c,i) => `
             <button class="chk" type="button" data-chk="${i}" aria-pressed="${checked[i]}">
@@ -1303,15 +1352,16 @@ function stackPickHTML(){
 
 function stackVerdictHTML(){
   const n = checked.filter(Boolean).length;
-  const v = verdictOf(n);
-  const glyph = { o:"◯", t:"△", x:"✕" }[v];
-  const label = { o:"3文がつながった", t:"どこか1文が浮いている", x:"型から外れている" }[v];
+  const fb = feedbackOf(n);
+  const label = { ex:"3文がつながった", good:"流れができている", some:"つながりかけている", start:"まず、組んでみた" }[fb.key];
   const desc = {
-    o:"この流れを、通しでもう一度声に出してから次へ。",
-    t:"外れた項目の文だけ書き直して、また3文を通しで読んでみてください。",
-    x:"模範のつないだ形を、通しで3回声に出して読んでから次へ進んでください。"
-  }[v];
-  return `<div class="verdict"><span class="g v-${v}">${glyph}</span><span class="t"><b>${label}</b>${desc}</span></div>`;
+    ex:"この流れを、通しでもう一度声に出してから次へ。",
+    good:"通しで読むと、もう一歩そろう場所が見えてきます。",
+    some:"外れた項目の文だけ、一つ書き直してみて。",
+    start:"3文を組もうとしたこと自体が前進です。模範のつないだ形を、通しで一度声に出してみてください。"
+  }[fb.key];
+  return `<div class="verdict"><span class="g ${fb.cls}">${fb.glyph}</span><span class="t"><b>${label}</b>${desc}</span></div>
+    ${fb.key === "start" ? `<p class="premise">失敗はありません。あるのはフィードバックだけです。<span>— NLPの前提より</span></p>` : ""}`;
 }
 
 /* ===================== メタモデル：長文ワーク ===================== */
@@ -1390,6 +1440,7 @@ function metaHTML(){
           <h2>回復質問を作る</h2>
           <div class="form">その一言に対して、実際にクライアントへ返す質問を書いてください。</div>
         </div>
+        ${termHTML(M[picked])}
         ${(LV().hint === "always" || hintOn) ? `<div class="hintbox"><span class="lbl">質問の型</span><div class="bd">${esc(M[picked].ask)}<span class="sk">${esc(M[picked].def)}</span></div></div>`
           : (LV().hint === "button" ? `<button class="btn ghost sm" id="hintbtn" type="button">ヒントを見る（質問の型）</button>` : "")}
         <div class="speak"><span class="n">1</span>まず声に出して言う　<span class="n">2</span>それから書く</div>
@@ -1415,7 +1466,7 @@ function metaHTML(){
       ${spot.also ? `<div class="alsobox"><b>ここには他にも重なっています：</b>${esc(spot.also)}</div>` : ""}
 
       <div>
-        <p class="eyebrow" style="margin:0 0 9px">自己採点 — 当てはまるものをタップ</p>
+        <p class="eyebrow" style="margin:0 0 9px">ふりかえり — 入っていたものをタップ</p>
         <div class="checks">
           ${correct.checks.map((c,i) => `
             <button class="chk" type="button" data-chk="${i}" aria-pressed="${checked[i]}">
@@ -1434,15 +1485,16 @@ function metaHTML(){
 
 function metaVerdictHTML(){
   const n = checked.filter(Boolean).length;
-  const v = verdictOf(n);
-  const glyph = { o:"◯", t:"△", x:"✕" }[v];
-  const label = { o:"回復できている", t:"あと一歩", x:"型から外れている" }[v];
+  const fb = feedbackOf(n);
+  const label = { ex:"しっかり回復できている", good:"回復できている", some:"回復に向かっている", start:"まず、問いを立てた" }[fb.key];
   const desc = {
-    o:"この質問なら、クライアントの中で情報が戻ります。次へ。",
-    t:"外れた項目を見直して、もう一度声に出して言い換えてみてください。",
-    x:"模範の質問を3回、声に出して読んでから次へ進んでください。"
-  }[v];
-  return `<div class="verdict"><span class="g v-${v}">${glyph}</span><span class="t"><b>${label}</b>${desc}</span></div>`;
+    ex:"この質問なら、クライアントの中で情報が戻ります。次へ。",
+    good:"通じる質問です。もう一つ足すと、さらに深く戻せます。",
+    some:"方向は合っています。外れた項目を一つだけ足してみて。",
+    start:"問いを立てようとしたこと自体が前進です。模範の質問を一度、声に出してみてください。"
+  }[fb.key];
+  return `<div class="verdict"><span class="g ${fb.cls}">${fb.glyph}</span><span class="t"><b>${label}</b>${desc}</span></div>
+    ${fb.key === "start" ? `<p class="premise">失敗はありません。あるのはフィードバックだけです。<span>— NLPの前提より</span></p>` : ""}`;
 }
 
 function metaDoneHTML(){
@@ -1479,6 +1531,7 @@ function metaRefHTML(){
           <div class="body">
             <div class="f">${esc(m.def)}</div>
             <div class="ex">${esc(m.ask)}</div>
+            ${m.term ? `<div class="termbox">${m.term}</div>` : ""}
           </div>
         </details>`).join("")}
     </div>
@@ -1500,6 +1553,7 @@ function referenceHTML(){
             <div class="f">${p.form}</div>
             <div class="ex">${p.ex}</div>
             <div class="wy">${esc(p.why)}</div>
+            ${p.term ? `<div class="termbox">${p.term}</div>` : ""}
           </div>
         </details>`).join("")}
     </div>
@@ -1517,14 +1571,14 @@ function statsHTML(){
 
     ${total ? `
       <div class="card">
-        <p class="eyebrow" style="margin:0">いま弱いのは</p>
+        <p class="eyebrow" style="margin:0">次に伸びるのは</p>
         <div class="weak-tags">${weak.map(w => `<span>${esc(w)}</span>`).join("")}</div>
-        <p class="note" style="margin:10px 0 0">直近6回までの判定から算出しています。未着手のパターンが最優先で並びます。</p>
+        <p class="note" style="margin:10px 0 0">直近6回までのふりかえりから、まだ手が薄いところを並べています。苦手という意味ではなく、<b>次に伸びしろがある場所</b>です。未着手のパターンが最優先。</p>
       </div>` : `
       <div class="card"><p class="empty" style="margin:0">まだ記録がありません。ドリルを1問やると、ここにパターン別の結果が積まれていきます。</p></div>`}
 
     <div class="card">
-      <p class="eyebrow" style="margin:0 0 4px">ミルトンモデル ◯ △ ✕</p>
+      <p class="eyebrow" style="margin:0 0 4px">ミルトンモデル — 入った ／ これから</p>
       ${PATTERNS.map(p => {
         const s = statsFor(p.id);
         const w = s.n ? [s.o,s.t,s.x].map(v => v/s.n*100) : [0,0,0];
@@ -1540,7 +1594,7 @@ function statsHTML(){
 
     ${store.records.some(r => r.p.startsWith("m") && r.p.length === 3) ? `
     <div class="card">
-      <p class="eyebrow" style="margin:0 0 4px">メタモデル ◯ △ ✕</p>
+      <p class="eyebrow" style="margin:0 0 4px">メタモデル — 入った ／ これから</p>
       ${META.map(m => {
         const st = statsFor(m.id);
         const w = st.n ? [st.o,st.t,st.x].map(v => v/st.n*100) : [0,0,0];
@@ -1608,6 +1662,9 @@ function wire(){
 
   const rv = document.getElementById("reveal");
   if(rv) rv.addEventListener("click", () => { stopTimer(); revealed = true; render(); });
+
+  const tb = document.getElementById("termbtn");
+  if(tb) tb.addEventListener("click", () => { termOn = true; render(); });
 
   const hb = document.getElementById("hintbtn");
   if(hb) hb.addEventListener("click", () => { hintOn = true; render(); });
