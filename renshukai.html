@@ -1,0 +1,425 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ミルトン練習会</title>
+
+<style>
+:root{
+  --ground:#EDEFF4; --surface:#FFFFFF; --surface-2:#F5F7FB;
+  --line:#D3D9E6; --line-soft:#E4E8F1;
+  --ink:#171C2B; --ink-2:#4A5266; --ink-3:#767E92;
+  --accent:#2B4B8C; --accent-soft:#E6ECF8; --accent-ink:#1E3567; --on-accent:#FFFFFF;
+  --good:#2C6E5D; --good-soft:#DEEDE7;
+  --mid:#8F6416;  --mid-soft:#F4EAD4;
+  --shadow:0 1px 2px rgba(23,28,43,.05), 0 10px 30px -14px rgba(23,28,43,.22);
+  --serif:"Hiragino Mincho ProN","HiraMinProN-W3","Yu Mincho","YuMincho","Noto Serif JP","Noto Serif CJK JP","MS PMincho",serif;
+  --sans:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Noto Sans JP","Meiryo",system-ui,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#111420; --surface:#191D2B; --surface-2:#1F2434;
+  --line:#2F3648; --line-soft:#262C3C;
+  --ink:#E7EAF2; --ink-2:#A9B0C4; --ink-3:#7C8397;
+  --accent:#8CA8DE; --accent-soft:#1D2740; --accent-ink:#BACCEE; --on-accent:#111420;
+  --good:#6FC0A6; --good-soft:#16302A; --mid:#D9AC59; --mid-soft:#332A16;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.7);
+}}
+:root[data-theme="dark"]{
+  --ground:#111420; --surface:#191D2B; --surface-2:#1F2434;
+  --line:#2F3648; --line-soft:#262C3C;
+  --ink:#E7EAF2; --ink-2:#A9B0C4; --ink-3:#7C8397;
+  --accent:#8CA8DE; --accent-soft:#1D2740; --accent-ink:#BACCEE; --on-accent:#111420;
+  --good:#6FC0A6; --good-soft:#16302A; --mid:#D9AC59; --mid-soft:#332A16;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+html{font-size:clamp(15px, 1.35vw, 22px)}
+@media (max-width:820px){html{font-size:17px}}
+body{margin:0; background:var(--ground); color:var(--ink); font-family:var(--sans); line-height:1.7;
+  -webkit-text-size-adjust:100%; text-size-adjust:100%}
+h1,h2,h3{margin:0; text-wrap:balance; font-weight:700; line-height:1.35}
+
+.stage{min-height:100svh; display:flex; flex-direction:column}
+.slide{flex:1; display:flex; flex-direction:column; justify-content:center; gap:1.5rem;
+  max-width:56rem; width:100%; margin:0 auto; padding:3.2rem 1.6rem 1.2rem}
+
+.eyebrow{font-family:var(--mono); font-size:.78rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-3)}
+.badge{display:inline-block; font-family:var(--mono); font-size:.8rem; letter-spacing:.1em;
+  color:var(--accent); background:var(--accent-soft); padding:.35em .8em; border-radius:999px; align-self:flex-start}
+.lead{font-size:1.15rem; color:var(--ink-2); line-height:1.95}
+.lead b{color:var(--ink)}
+
+h1.title{font-family:var(--serif); font-size:3.1rem; letter-spacing:.03em}
+h2.head{font-size:2.1rem}
+h2.head .n{font-family:var(--mono); color:var(--accent); margin-right:.5em; font-size:.8em}
+
+.card{background:var(--surface); border:1px solid var(--line-soft); border-radius:14px; padding:1.5rem 1.7rem; box-shadow:var(--shadow)}
+
+.katagata{background:var(--accent-soft); border-radius:14px; padding:1.4rem 1.6rem; font-size:1.28rem; line-height:1.95; color:var(--accent-ink); font-weight:700}
+.katagata em{font-style:normal; background:var(--surface); padding:.1em .45em; border-radius:6px; font-weight:500; color:var(--ink-2)}
+
+.utter{background:var(--surface); border:1px solid var(--line-soft); border-left:4px solid var(--accent);
+  border-radius:5px 14px 14px 5px; padding:1.5rem 1.7rem; box-shadow:var(--shadow)}
+.utter .who{font-family:var(--mono); font-size:.76rem; letter-spacing:.18em; color:var(--ink-3); margin-bottom:.6rem}
+.utter p{margin:0; font-family:var(--serif); font-size:1.85rem; line-height:1.85; font-weight:600}
+
+.doit{display:flex; align-items:center; gap:1rem; flex-wrap:wrap; background:var(--mid-soft); border-radius:14px; padding:1.1rem 1.5rem}
+.doit .t{font-size:1.22rem; font-weight:700; color:var(--ink)}
+.doit .s{font-size:.95rem; color:var(--ink-2)}
+.tbtn{font-family:var(--mono); font-size:1.6rem; font-weight:600; font-variant-numeric:tabular-nums;
+  background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:.3em .7em; cursor:pointer; color:var(--ink)}
+.tbtn.run{background:var(--accent); color:var(--on-accent); border-color:var(--accent)}
+.tbtn.done{background:var(--mid); color:var(--surface); border-color:var(--mid)}
+
+.answer{background:var(--good-soft); border-radius:14px; padding:1.5rem 1.7rem}
+.answer .lbl{font-family:var(--mono); font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; color:var(--good); margin-bottom:.6rem}
+.answer p{margin:0 0 .8rem; font-family:var(--serif); font-size:1.55rem; line-height:1.9; font-weight:600}
+.answer p:last-child{margin-bottom:0}
+.answer b{background:var(--surface); padding:.05em .3em; border-radius:5px}
+
+.kimo{background:var(--surface); border:1px solid var(--line-soft); border-radius:14px; padding:1.2rem 1.5rem; font-size:1.05rem; line-height:1.9; color:var(--ink-2)}
+.kimo .lbl{font-weight:700; color:var(--ink)}
+
+.grid11{display:grid; grid-template-columns:repeat(auto-fill,minmax(15rem,1fr)); gap:.6rem}
+.p11{background:var(--surface); border:1px solid var(--line-soft); border-radius:10px; padding:.75rem .95rem}
+.p11.on{border-color:var(--accent); background:var(--accent-soft); box-shadow:var(--shadow)}
+.p11 .nm{font-weight:700; font-size:1.02rem}
+.p11 .nm .no{font-family:var(--mono); font-size:.78em; color:var(--ink-3); margin-right:.5em; font-weight:400}
+.p11.on .nm .no{color:var(--accent)}
+.p11 .ex{font-size:.9rem; color:var(--ink-3); line-height:1.65; margin-top:.15rem}
+
+.three{display:flex; flex-direction:column; gap:.7rem}
+.trow{display:grid; grid-template-columns:auto 1fr; gap:.4rem 1.1rem; align-items:baseline;
+  background:var(--surface); border:1px solid var(--line-soft); border-radius:12px; padding:1rem 1.3rem; box-shadow:var(--shadow)}
+.trow .k{grid-row:1/3; font-family:var(--mono); font-size:1rem; font-weight:600; color:var(--accent);
+  background:var(--accent-soft); border-radius:8px; padding:.35em .7em}
+.trow b{font-size:1.2rem}
+.trow span{font-size:.98rem; color:var(--ink-2); line-height:1.75}
+
+.flow{display:flex; flex-direction:column; gap:.5rem}
+.frow{display:grid; grid-template-columns:5.5rem 1fr; gap:1.1rem; align-items:baseline;
+  padding:.85rem 0; border-bottom:1px solid var(--line-soft)}
+.frow:last-child{border-bottom:0}
+.frow .tm{font-family:var(--mono); font-size:1rem; color:var(--accent); font-variant-numeric:tabular-nums}
+.frow .bd b{font-size:1.15rem} .frow .bd span{display:block; font-size:.95rem; color:var(--ink-2); line-height:1.7}
+
+.stack3{display:flex; flex-direction:column; gap:.6rem}
+.stack3 .s{background:var(--surface); border:1px solid var(--line-soft); border-radius:12px; padding:1rem 1.3rem;
+  font-family:var(--serif); font-size:1.35rem; line-height:1.9; font-weight:600; display:grid; grid-template-columns:auto 1fr; gap:1rem; align-items:baseline}
+.stack3 .s .k{font-family:var(--mono); font-size:.8rem; color:var(--accent); background:var(--accent-soft); padding:.35em .7em; border-radius:8px; font-weight:600}
+.dojo{display:flex; gap:1.6rem; align-items:center; flex-wrap:wrap;
+  background:var(--surface); border:1px solid var(--line-soft); border-radius:14px; padding:1.4rem 1.6rem; box-shadow:var(--shadow)}
+.dojo .qr{background:#fff; border-radius:10px; padding:.5rem; line-height:0; flex:0 0 auto}
+.dojo .qr svg{width:13rem; height:13rem; display:block; shape-rendering:crispEdges}
+.dojo .dtx{flex:1 1 18rem; display:flex; flex-direction:column; gap:.5rem}
+.dojo .dtx b{font-size:1.35rem}
+.dojo .dtx code{font-family:var(--mono); font-size:.92rem; color:var(--accent); background:var(--accent-soft);
+  padding:.45em .7em; border-radius:8px; word-break:break-all; line-height:1.6}
+.dojo .dtx span{font-size:.98rem; color:var(--ink-2); line-height:1.8}
+.para{background:var(--good-soft); border-radius:14px; padding:1.5rem 1.7rem; font-family:var(--serif); font-size:1.45rem; line-height:2.05; font-weight:600}
+
+/* ---- 操作バー ---- */
+.bar{position:sticky; bottom:0; background:var(--ground); border-top:1px solid var(--line);
+  display:flex; align-items:center; gap:.8rem; padding:.7rem 1.2rem}
+.bar .prog{flex:1; height:4px; background:var(--line-soft); border-radius:999px; overflow:hidden}
+.bar .prog i{display:block; height:100%; background:var(--accent); transition:width .25s ease}
+.bar .num{font-family:var(--mono); font-size:.85rem; color:var(--ink-3); font-variant-numeric:tabular-nums}
+.nav{background:var(--surface); border:1px solid var(--line); border-radius:9px; color:var(--ink-2);
+  font-family:var(--sans); font-size:.95rem; padding:.5em 1em; cursor:pointer}
+.nav:hover{border-color:var(--accent); color:var(--ink)}
+.nav.pri{background:var(--accent); border-color:var(--accent); color:var(--on-accent); font-weight:700}
+.topbar{position:absolute; top:0; left:0; right:0; display:flex; align-items:center; gap:.8rem; padding:.9rem 1.4rem}
+.topbar .t{font-family:var(--mono); font-size:.76rem; letter-spacing:.14em; color:var(--ink-3)}
+.topbar .sp{flex:1}
+.mini{background:none; border:1px solid var(--line); border-radius:999px; color:var(--ink-3);
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; padding:.35em .9em; cursor:pointer}
+.mini:hover{color:var(--ink-2); border-color:var(--ink-3)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="stage">
+  <div class="topbar">
+    <span class="t" id="chapter"></span><span class="sp"></span>
+    <button class="mini" id="theme" type="button">◐ 表示</button>
+  </div>
+  <div class="slide" id="slide"></div>
+  <div class="bar">
+    <button class="nav" id="prev" type="button">← 戻る</button>
+    <span class="prog"><i id="prog"></i></span>
+    <span class="num" id="num"></span>
+    <button class="nav pri" id="next" type="button">次へ →</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ミルトンモデル11パターン（原典 第6章） */
+const P11 = [
+  ["01","名詞化","あなたの中の変化が、静かに始まっています"],
+  ["02","不特定指示詞","人は誰でも、深いリソースを持っています"],
+  ["03","不特定動詞","その体験が、あなたを導きます"],
+  ["04","ペーシング・接続詞（弱）","事実 ＋ そして ＋ 誘導"],
+  ["05","ペーシング・時間（中）","事実 ＋ 〜しながら ＋ 誘導"],
+  ["06","ペーシング・因果（強）","事実 ＋ 〜するたびに ＋ 誘導"],
+  ["07","トゥルイズム","人は、いつでも新しいことを学べます"],
+  ["08","前提","終えたあとに、どんな変化を感じるでしょうね"],
+  ["09","ダブルバインド","今週から？ それとも来週から？"],
+  ["10","否定命令","まだ、理解しようと思わなくていいですよ"],
+  ["11","アナログマーキング","強調したい語だけ、声を落として言う"]
+];
+const TODAY = ["07","04","08"];   // 今日練習する3つ
+
+const S = [];
+const add = (chapter, html) => S.push({ chapter, html });
+
+/* ── 導入 ───────────────────────────── */
+add("はじめに", `
+  <span class="badge">NLP練習会</span>
+  <h1 class="title">ミルトンモデルを<br>使ってみる</h1>
+  <p class="lead">今日は、覚えることではなく <b>その場で口から出るようにすること</b> をやります。<br>
+  前半25分で3つの型を体に入れて、後半のセッションでそのまま使います。</p>`);
+
+add("はじめに", `
+  <span class="eyebrow">今日の流れ</span>
+  <h2 class="head">前半で仕込んで、後半で使う</h2>
+  <div class="flow">
+    <div class="frow"><span class="tm">3分</span><span class="bd"><b>全体像</b><span>ミルトンモデル11パターンを一望して、今日の3つに絞る</span></span></div>
+    <div class="frow"><span class="tm">18分</span><span class="bd"><b>型を1つずつ</b><span>型を見る → お題 → 声に出す → 例文を見る。これを3周</span></span></div>
+    <div class="frow"><span class="tm">4分</span><span class="bd"><b>つなぐ</b><span>3つを1つのかたまりにする。これが後半で使う武器になる</span></span></div>
+    <div class="frow"><span class="tm">後半</span><span class="bd"><b>セッション</b><span>ペアで交代。いま作ったかたまりを、実際に使ってみる</span></span></div>
+  </div>
+  <p class="lead"><b>お願いがひとつ。</b>お題が出たら、頭の中で考えるだけにせず、<b>必ず声に出して</b>言ってみてください。口の筋肉が覚えないと、本番では出てきません。</p>`);
+
+/* ── 型カード ───────────────────────── */
+add("全体像", `
+  <span class="eyebrow">型カード</span>
+  <h2 class="head">ミルトンモデル 11パターン</h2>
+  <p class="lead">メタモデルが「情報を回復して具体化する」のに対し、ミルトンモデルは <b>あえて曖昧にして、意識の批判フィルターを迂回する</b> 言語です。</p>
+  <div class="grid11">
+    ${P11.map(([n,nm,ex]) => `<div class="p11"><div class="nm"><span class="no">${n}</span>${nm}</div><div class="ex">${ex}</div></div>`).join("")}
+  </div>`);
+
+add("全体像", `
+  <span class="eyebrow">今日やるのは、このうち3つ</span>
+  <h2 class="head">つなぐと、そのまま誘導になる3つ</h2>
+  <div class="grid11">
+    ${P11.map(([n,nm,ex]) => `<div class="p11${TODAY.includes(n)?" on":""}"><div class="nm"><span class="no">${n}</span>${nm}</div><div class="ex">${ex}</div></div>`).join("")}
+  </div>
+  <p class="lead">この3つは <b>バラバラの技ではなく、ひと続きの流れ</b> です。入口で安心をつくり、いまの事実から連れていき、変化を当たり前のこととして置く。</p>`);
+
+add("全体像", `
+  <span class="eyebrow">今日の3つ</span>
+  <h2 class="head">セッションのどこで効くか</h2>
+  <div class="three">
+    <div class="trow"><span class="k">①</span><b>トゥルイズム</b><span>入口。誰も否定できないことを置いて、「はい」の構えをつくる</span></div>
+    <div class="trow"><span class="k">②</span><b>ペーシング → リーディング</b><span>中盤。いま起きている事実から、連れていきたい方向へ橋を架ける</span></div>
+    <div class="trow"><span class="k">③</span><b>前提</b><span>終盤。変化が起きることを、すでに決まったこととして置く</span></div>
+  </div>`);
+
+/* ── 型ごとのブロックを組む ───────────── */
+function block(no, name, chapter, katagata, why, items, closing){
+  add(chapter, `
+    <span class="badge">型 ${no}</span>
+    <h2 class="head">${name}</h2>
+    <div class="katagata">${katagata}</div>
+    <div class="kimo"><span class="lbl">なぜ効くのか：</span>${why}</div>`);
+
+  items.forEach((it, i) => {
+    add(chapter, `
+      <span class="eyebrow">お題 ${i+1} / ${items.length}　—　${name}</span>
+      <div class="utter"><div class="who">クライアント役</div><p>「${it.u}」</p></div>
+      <div class="doit">
+        <button class="tbtn" data-timer="45">45</button>
+        <span><span class="t">この発言に、${name}で返してください。</span><br>
+        <span class="s">まず声に出して言う → 言えたら、そのまま覚えておく</span></span>
+      </div>`);
+    add(chapter, `
+      <span class="eyebrow">例文　—　${name}　お題 ${i+1}</span>
+      <div class="utter"><div class="who">クライアント役</div><p>「${it.u}」</p></div>
+      <div class="answer"><div class="lbl">たとえば</div>${it.a.map(x=>`<p>${x}</p>`).join("")}</div>
+      <div class="kimo"><span class="lbl">ここが肝：</span>${it.k}</div>`);
+  });
+
+  if(closing) add(chapter, closing);
+}
+
+/* ── ① トゥルイズム ─────────────────── */
+block("①", "トゥルイズム", "型① トゥルイズム",
+  `<em>誰も否定できない普遍的な事実</em> を、そのまま置くだけ。<br><span style="font-size:.85em;font-weight:500;color:var(--ink-2)">よく使う器：「人は、〜ものです」／「どんな〜も、〜です」／「〜には、〜があります」</span>`,
+  `否定できないことを聞くと、脳に「はい」の構えができます（イエスセット）。その構えのまま、次の言葉も受け取られます。<b>説得ではなく、事実だけを置く</b>のがコツです。`,
+  [
+    { u:"この年から始めるのは、もう遅い気がするんです。",
+      a:["人は、いつでも新しいことを学ぶことができます。"],
+      k:`「遅くないですよ」と<b>直接否定しない</b>。否定すると相手は守りに入ります。誰の話でもない一般則として置くと、相手が勝手に自分に当てはめてくれます。` },
+    { u:"決めても三日で続かなくなるので、もう自分に期待していません。",
+      a:["どんな習慣も、最初は続かないところから始まっています。"],
+      k:`励ましの言葉を<b>ひとつも使っていない</b>のがポイント。事実を置くだけで、「続かない自分」が例外ではなく通常の一段階に戻ります。` }
+  ],
+  `<span class="eyebrow">型① まとめ</span>
+   <h2 class="head">トゥルイズムの見分け方</h2>
+   <p class="lead">作った文が本当にトゥルイズムかどうかは、<b>「これ、反論できる？」</b>と自分に聞けば分かります。</p>
+   <div class="kimo"><span class="lbl">反論できてしまう例：</span>「何歳からでも遅くありません」→ 「いや、遅いこともある」と返せてしまう。<br>
+   <span class="lbl">反論できない例：</span>「人は、いつでも新しいことを学ぶことができます」→ 否定のしようがない。</div>`);
+
+/* ── ② ペーシング ───────────────────── */
+block("②", "ペーシング → リーディング", "型② ペーシング",
+  `<em>今この瞬間の、否定できない事実</em> ＋ 接続詞 ＋ <em>連れていきたい状態</em>`,
+  `脳はA（事実）を真実だと認めているので、接続された B（誘導）も同じ真実の側に置かれます。接続詞は「そして」（弱）／「〜しながら」（中）／「〜するたびに」（強）と強さを選べます。<b>抵抗が強い相手ほど、弱い接続から</b>。`,
+  [
+    { u:"やりたいことはあるんですけど、なかなか最初の一歩が踏み出せなくて。",
+      a:["今、その一歩のことを、こうして言葉にされています。<b>そして</b>、少しずつ、輪郭が見えてきます。"],
+      k:`前半は<b>目の前で今まさに起きていること</b>だけ。「不安なんですね」は<b>推測</b>なので使えません。ここを外すと、以降がぜんぶ効かなくなります。` },
+    { u:"本音を言ったら、嫌われるんじゃないかと不安になります。",
+      a:["今、その不安を私に話してくださいました。<b>そして</b>、それを話せる場所が、ここにはあります。",
+         "話してくださる<b>たびに</b>、その重さは少しずつ変わっていきます。"],
+      k:`「話してくださった」は<b>否定できない事実</b>。そこに「安全な場所」を接続すると、安全さが事実の側に寄ります。<b>議論せずに現実を動かす</b>のがミルトンモデルです。` }
+  ],
+  `<span class="eyebrow">型② まとめ</span>
+   <h2 class="head">ペーシングの素材に困ったら</h2>
+   <p class="lead">前半に置ける「今この瞬間の事実」は、実はいつも手元にあります。</p>
+   <div class="kimo">
+   ・「今、こうして話してくださっています」<br>
+   ・「今日、この時間をご自分のために使っていらっしゃいます」<br>
+   ・「息を吸って、吐いていらっしゃいます」<br><br>
+   <span class="lbl">迷ったら「今ここにいる」に戻る。</span>これは誰に対しても、いつでも使えます。</div>`);
+
+/* ── ③ 前提 ─────────────────────────── */
+block("③", "前提", "型③ 前提",
+  `<em>変化</em> した<b>あとで</b>、<em>別のこと</em> はどうなっているでしょうね。`,
+  `問われているのは「どんな」であって「するかどうか」ではありません。答えた時点で、相手はもうその変化が起きた場所に立っています。<b>「もし〜なら」にすると条件になって、前提が壊れます。</b>`,
+  [
+    { u:"変わりたいとは思うんです。でも、どこから手をつけたらいいのか。",
+      a:["変化が始まったことに気づくのは、いつごろになりそうですか？"],
+      k:`「変化が始まる」を<b>確定事項として埋め込み</b>、質問は時期だけに向けています。「変われると思いますよ」と励ますより、はるかに強く働きます。` },
+    { u:"ちゃんと準備できてからじゃないと、始めちゃいけない気がして。",
+      a:["準備が十分だと感じられた<b>とき</b>、最初にやることは何になりますか？"],
+      k:`<b>「もし準備ができたら」だと条件になって前提が壊れます。</b>「〜とき」にすると、必ず訪れることになります。この一語の差が効きます。` }
+  ],
+  `<span class="eyebrow">型③ まとめ</span>
+   <h2 class="head">前提が壊れる言い方・通る言い方</h2>
+   <div class="kimo">
+   <span class="lbl">壊れる：</span>「<b>もし</b>うまくいったら、どうしますか？」→ うまくいくかどうかが議題に戻ってしまう<br><br>
+   <span class="lbl">通る：</span>「うまくいった<b>あとで</b>、まず誰に伝えたいですか？」→ 議題は「誰に伝えるか」に移っている</div>`);
+
+/* ── 仕上げ ─────────────────────────── */
+add("仕上げ", `
+  <span class="badge">仕上げ</span>
+  <h2 class="head">3つを、ひと続きにする</h2>
+  <p class="lead">ここまでの3つを <b>この順につなぐ</b> と、短い誘導のかたまりになります。<br>後半のセッションで、そのまま使えます。</p>
+  <div class="three">
+    <div class="trow"><span class="k">1</span><b>トゥルイズム</b><span>否定できないことを置いて、「はい」をつくる</span></div>
+    <div class="trow"><span class="k">2</span><b>ペーシング → リーディング</b><span>今の事実から、連れていきたい方向へ</span></div>
+    <div class="trow"><span class="k">3</span><b>前提</b><span>変化を、すでに決まったこととして置く</span></div>
+  </div>`);
+
+add("仕上げ", `
+  <span class="eyebrow">最後のお題</span>
+  <div class="utter"><div class="who">クライアント役</div><p>「自分なんかが、やっていいのかなって思ってしまうんです。」</p></div>
+  <div class="doit">
+    <button class="tbtn" data-timer="90">90</button>
+    <span><span class="t">3文つないで、ひと続きにしてください。</span><br>
+    <span class="s">トゥルイズム → ペーシング → 前提。通しで声に出す</span></span>
+  </div>`);
+
+add("仕上げ", `
+  <span class="eyebrow">例文　—　3文つないだ形</span>
+  <div class="stack3">
+    <div class="s"><span class="k">1</span>今どんなに活躍している人にも、何も持っていなかった時期があります。</div>
+    <div class="s"><span class="k">2</span>その「自分なんかが」という言葉を、正直に口にしてくださいました。だからこそ、あなたの誠実さが伝わってきます。</div>
+    <div class="s"><span class="k">3</span>その資格があると感じられるようになったとき、いちばん最初に誰の顔が浮かぶでしょうか。</div>
+  </div>
+  <div class="kimo"><span class="lbl">ここが肝：</span>2文目で相手の否定的な言葉を <b>そのまま引用</b> してから、因果でひっくり返しています。引用そのものがペーシングになります。</div>`);
+
+add("仕上げ", `
+  <span class="eyebrow">通しで読むと</span>
+  <div class="para">今どんなに活躍している人にも、何も持っていなかった時期があります。その「自分なんかが」という言葉を、正直に口にしてくださいました。だからこそ、あなたの誠実さが伝わってきます。その資格があると感じられるようになったとき、いちばん最初に誰の顔が浮かぶでしょうか。</div>
+  <p class="lead">3文で、<b>安心 → 事実からの誘導 → 変化の前提</b> まで届いています。<br>説得も励ましも、ひとつも使っていません。</p>`);
+
+/* ── 後半へ ─────────────────────────── */
+add("後半へ", `
+  <span class="badge">後半</span>
+  <h2 class="head">セッションで使ってみる</h2>
+  <p class="lead">ペアになって、10分ずつ交代します。<b>今日の3つを、どこかで必ず使ってみてください。</b>うまく決まらなくて構いません。使おうとした回数だけが、次につながります。</p>
+  <div class="flow">
+    <div class="frow"><span class="tm">2分</span><span class="bd"><b>望む状態を聞く</b><span>「制限が一切なかったら、どうなっていたいですか？」＋ 五感で具体的に</span></span></div>
+    <div class="frow"><span class="tm">2分</span><span class="bd"><b>ブレーキを聞き切る</b><span>「それを止めているものは？」　遮らず、最後まで</span></span></div>
+    <div class="frow"><span class="tm">4分</span><span class="bd"><b>今日の3つを使う</b><span>トゥルイズム → ペーシング → 前提。ここが本番</span></span></div>
+    <div class="frow"><span class="tm">2分</span><span class="bd"><b>次の一歩</b><span>「今日やるなら、A？ それともB？」（ダブルバインド）</span></span></div>
+  </div>`);
+
+add("後半へ", `
+  <span class="eyebrow">終わったら、相手に返すこと</span>
+  <h2 class="head">クライアント役が伝える3つ</h2>
+  <p class="lead">評価はしません。<b>自分の中で起きたことだけ</b>を伝えてください。</p>
+  <div class="three">
+    <div class="trow"><span class="k">1</span><b>どこで力が抜けたか</b><span>「この言葉のあたりで、肩が下りた気がした」</span></div>
+    <div class="trow"><span class="k">2</span><b>どこで引っかかったか</b><span>「ここは、ちょっと構えてしまった」</span></div>
+    <div class="trow"><span class="k">3</span><b>覚えている言葉</b><span>いま思い出せる一言。それが実際に届いた言葉です</span></div>
+  </div>`);
+
+add("おわりに", `
+  <h2 class="head">持ち帰り練習：ミルトン道場</h2>
+  <p class="lead">今日の型を<b>ひとりで練習できるアプリ</b>を用意しました。ログイン不要・無料。スマホでもPCでも開けます。</p>
+  <div class="dojo">
+    <div class="qr"><svg viewBox="0 0 37 37" class="segno"><path class="qrline" stroke="#111" d="M2 2.5h7m1 0h2m4 0h4m3 0h1m1 0h1m2 0h7m-33 1h1m5 0h1m2 0h1m1 0h1m5 0h4m5 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h1m1 0h1m1 0h1m2 0h2m1 0h1m1 0h1m2 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h2m1 0h2m1 0h2m2 0h1m4 0h1m2 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h2m1 0h4m3 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m1 0h1m1 0h2m1 0h1m2 0h1m2 0h1m1 0h2m3 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-25 1h5m1 0h8m1 0h2m-25 1h1m3 0h1m1 0h4m1 0h1m5 0h1m3 0h3m1 0h5m2 0h1m-32 1h1m1 0h1m1 0h1m2 0h1m1 0h9m2 0h1m1 0h1m1 0h1m3 0h3m-30 1h3m1 0h3m2 0h1m3 0h1m2 0h1m1 0h2m1 0h2m4 0h1m1 0h1m-31 1h1m1 0h2m2 0h1m6 0h2m1 0h2m1 0h5m1 0h1m5 0h1m-30 1h2m1 0h1m2 0h2m2 0h3m1 0h6m1 0h3m1 0h2m-30 1h3m2 0h1m1 0h3m2 0h2m2 0h1m1 0h1m2 0h3m1 0h1m1 0h1m1 0h2m-31 1h2m1 0h1m1 0h3m2 0h2m1 0h2m1 0h1m5 0h5m1 0h1m1 0h2m-32 1h2m1 0h1m1 0h1m2 0h3m3 0h1m2 0h2m1 0h2m2 0h3m1 0h1m-28 1h2m3 0h1m1 0h5m2 0h1m1 0h1m1 0h6m1 0h1m1 0h1m2 0h1m-32 1h1m1 0h1m4 0h1m2 0h4m1 0h1m1 0h2m4 0h1m5 0h3m-32 1h1m1 0h5m1 0h4m1 0h1m1 0h2m1 0h1m2 0h1m1 0h5m1 0h1m-29 1h1m3 0h1m2 0h2m1 0h2m1 0h6m1 0h4m1 0h2m-28 1h2m1 0h1m1 0h2m1 0h3m2 0h1m1 0h2m1 0h7m1 0h4m1 0h2m-33 1h1m3 0h1m4 0h1m1 0h1m5 0h2m4 0h3m1 0h1m3 0h1m-29 1h4m2 0h2m2 0h3m2 0h1m1 0h5m1 0h3m2 0h1m-29 1h1m1 0h1m1 0h12m1 0h2m2 0h2m1 0h1m3 0h2m-33 1h2m4 0h1m1 0h2m3 0h1m3 0h1m3 0h9m2 0h1m-25 1h2m1 0h1m1 0h4m1 0h1m2 0h2m1 0h1m3 0h1m1 0h1m-31 1h7m1 0h2m1 0h3m1 0h1m1 0h1m2 0h1m3 0h1m1 0h1m1 0h2m1 0h1m-32 1h1m5 0h1m2 0h4m1 0h1m1 0h2m3 0h1m2 0h1m3 0h1m2 0h1m-32 1h1m1 0h3m1 0h1m1 0h1m4 0h1m4 0h5m1 0h6m2 0h1m-33 1h1m1 0h3m1 0h1m2 0h2m3 0h1m1 0h1m1 0h1m1 0h1m2 0h2m1 0h5m-31 1h1m1 0h3m1 0h1m2 0h1m1 0h1m1 0h1m2 0h2m3 0h1m3 0h5m-30 1h1m5 0h1m3 0h2m1 0h1m3 0h8m1 0h1m-27 1h7m1 0h2m2 0h1m1 0h2m1 0h1m2 0h5m1 0h1m5 0h1"/></svg></div>
+    <div class="dtx">
+      <b>ミルトン道場</b>
+      <code>yumewokatarerucoach-beep.github.io/milton-dojo/</code>
+      <span>ミルトンモデル11パターンの単発ドリル／5つの型の連結ドリル／メタモデルの長文ワーク。◯✕はつきません、返ってくるのは<b>フィードバックだけ</b>です。書いた文章は端末の外に出ません。</span>
+    </div>
+  </div>`);
+
+add("おわりに", `
+  <h2 class="head">持ち帰り</h2>
+  <p class="lead">今日やった3つは、<b>明日のふつうの会話でも使えます</b>。相手が悩みを話しはじめたら、まず「今、こうして話してくださっています」から始めてみてください。</p>
+  <div class="kimo">
+  <span class="lbl">今日の3つ：</span>トゥルイズム ／ ペーシング → リーディング ／ 前提<br>
+  <span class="lbl">迷ったら：</span>「今ここにいる」という事実に戻る<br>
+  <span class="lbl">絶対に外さない：</span>ペーシングの前半は、推測ではなく<b>今この瞬間の事実</b></div>
+  <p class="lead">おつかれさまでした。</p>`);
+
+/* ===================== 進行 ===================== */
+let ix = 0, tick = null;
+const $ = id => document.getElementById(id);
+
+function render(){
+  const s = S[ix];
+  $("slide").innerHTML = s.html;
+  $("chapter").textContent = s.chapter;
+  $("num").textContent = (ix+1) + " / " + S.length;
+  $("prog").style.width = ((ix+1)/S.length*100) + "%";
+  $("prev").disabled = ix === 0;
+  $("next").textContent = ix === S.length-1 ? "最初へ" : "次へ →";
+  stopTimer();
+  const tb = $("slide").querySelector("[data-timer]");
+  if(tb) tb.addEventListener("click", () => runTimer(tb));
+  window.scrollTo({top:0});
+}
+function stopTimer(){ if(tick){ clearInterval(tick); tick = null; } }
+function runTimer(btn){
+  stopTimer();
+  let left = Number(btn.dataset.timer);
+  btn.classList.remove("done"); btn.classList.add("run");
+  btn.textContent = left;
+  tick = setInterval(() => {
+    left--;
+    btn.textContent = left;
+    if(left <= 0){ stopTimer(); btn.classList.remove("run"); btn.classList.add("done"); btn.textContent = "時間"; }
+  }, 1000);
+}
+const go = d => { ix = (ix + d + S.length) % S.length; render(); };
+$("next").addEventListener("click", () => go(1));
+$("prev").addEventListener("click", () => go(-1));
+document.addEventListener("keydown", e => {
+  if(e.key === "ArrowRight" || e.key === " " || e.key === "PageDown"){ e.preventDefault(); go(1); }
+  if(e.key === "ArrowLeft"  || e.key === "PageUp"){ e.preventDefault(); go(-1); }
+});
+$("theme").addEventListener("click", () => {
+  const r = document.documentElement, now = r.getAttribute("data-theme");
+  const nx = now === "light" ? "dark" : now === "dark" ? null : "light";
+  if(nx) r.setAttribute("data-theme", nx); else r.removeAttribute("data-theme");
+});
+render();
+</script>
