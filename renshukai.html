@@ -423,3 +423,13 @@ $("theme").addEventListener("click", () => {
 });
 render();
 </script>
+
+<script>
+/* オフラインでも開けるようにする。外部サーバーとのやり取りは一切しない。
+   file:// で開いたときは何も起きない（登録が失敗するだけ）。 */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+</script>
