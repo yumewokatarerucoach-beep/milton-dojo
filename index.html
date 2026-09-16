@@ -233,6 +233,25 @@ details.ref .body .f{font-size:.92rem; color:var(--ink-2); line-height:1.75}
 details.ref .body .ex{font-family:var(--serif); font-size:1rem; font-weight:600; line-height:1.9; padding-left:14px; border-left:2px solid var(--accent)}
 details.ref .body .wy{font-size:.89rem; color:var(--ink-3); line-height:1.75}
 
+/* ---- テキスト（読む） ---- */
+.tx{display:flex; flex-direction:column; gap:14px}
+.tx h2{font-size:1.28rem; margin:0; line-height:1.5}
+.tx h3{font-size:1.02rem; margin:10px 0 0; color:var(--ink)}
+.tx p{margin:0; font-size:.95rem; line-height:1.9; color:var(--ink-2)}
+.tx p b, .tx li b{color:var(--ink)}
+.tx ul{margin:0; padding-left:1.25em; display:flex; flex-direction:column; gap:6px}
+.tx li{font-size:.95rem; line-height:1.85; color:var(--ink-2)}
+.hitokoto{font-family:var(--serif); font-size:1.06rem; font-weight:600; line-height:1.9; padding:15px 17px; background:var(--accent-soft); border-radius:11px; color:var(--ink)}
+.kvs{display:flex; flex-direction:column; gap:11px; background:var(--surface); border:1px solid var(--line-soft); border-radius:11px; padding:14px 16px}
+.kv{display:flex; flex-direction:column; gap:2px}
+.kv .k{font-family:var(--mono); font-size:.72rem; letter-spacing:.08em; color:var(--accent)}
+.kv .v{font-size:.94rem; line-height:1.8; color:var(--ink)}
+details.pp summary{align-items:flex-start; line-height:1.6}
+details.pp summary .no{padding-top:4px}
+.linkbtn{background:none; border:0; padding:0; margin-top:4px; color:var(--accent); font:inherit; font-size:.9rem; font-weight:600; text-decoration:underline; text-underline-offset:3px; cursor:pointer; text-align:left}
+.srcbox{font-size:.82rem; color:var(--ink-3); line-height:1.8; border-top:1px solid var(--line); padding-top:12px}
+.mode .rd{font-family:var(--mono); font-size:.72rem; color:var(--good); margin-left:6px; font-weight:600}
+
 /* ---- stats ---- */
 .statrow{display:grid; grid-template-columns:1fr auto; gap:6px 12px; align-items:center; padding:11px 0; border-bottom:1px solid var(--line-soft)}
 .statrow:last-child{border-bottom:0}
@@ -1221,7 +1240,7 @@ const MONO = [
 /* ===================== 記録（この端末の localStorage のみ） ===================== */
 const KEY = "milton-drill-v1";
 const MAX_RECORDS = 400;
-let store = { records: [], timer: 0, fs: 1, level: "normal" };
+let store = { records: [], timer: 0, fs: 1, level: "normal", read: [] };
 
 function load(){
   try{
@@ -1232,6 +1251,7 @@ function load(){
       if(typeof o.timer === "number") store.timer = o.timer;
       if(typeof o.fs === "number" && o.fs > 0.5 && o.fs < 2) store.fs = (o.fs === 1.28 ? 1.33 : o.fs === 0.9 ? 0.88 : o.fs === 1.13 ? 1.15 : o.fs);
       if(["intro","normal","real"].includes(o.level)) store.level = o.level;
+      if(Array.isArray(o.read)) store.read = o.read.filter(x => typeof x === "string");
     }
   }catch(e){ /* 使えない環境でもドリルは動く */ }
 }
@@ -1277,7 +1297,7 @@ const LEVELS = {
 const LV = () => LEVELS[store.level] || LEVELS.normal;
 
 /* ここは「採点」ではなく「フィードバック」。うまくいかない出し方は返さない。
-   NLPの前提6「失敗はない、あるのはフィードバックだけ」に合わせている。 */
+   NLPの前提08「フィードバック vs. 失敗」に合わせている。 */
 function feedbackOf(n){
   const lv = store.level || "normal";
   let key;
@@ -1306,6 +1326,7 @@ let weakMode = false;     // 弱点優先で出題しているか
 let seqPick = "random";   // 連結ドリルで選んだ型（"random" ならその都度ランダム）
 let curSeq = null;        // 出題中の型
 let curMono = null;       // 出題中の語り
+let curText = null;       // 読んでいる章
 let spotIx = 0;           // 語りの中の何番目か
 let picked = null;        // 選んだメタモデルのパターン
 let cur = null;           // 現在の設問
@@ -1420,6 +1441,8 @@ function render(){
   else if(view === "stackpick") app.innerHTML = stackPickHTML();
   else if(view === "reference") app.innerHTML = referenceHTML();
   else if(view === "stats") app.innerHTML = statsHTML();
+  else if(view === "textbook") app.innerHTML = textbookHTML();
+  else if(view === "chapter") app.innerHTML = chapterHTML();
   wire();
   window.scrollTo({top:0, behavior: view === "drill" ? "auto" : "auto"});
 }
@@ -1436,6 +1459,10 @@ function homeHTML(){
     </p>
 
     <div class="modes">
+      <button class="mode" data-go="textbook" type="button">
+        <span class="mk">T</span><b>テキスト（読む）</b>
+        <span>NLPの考え方を、やさしい言葉で読めます。いま読めるのは「NLPってなに？」と「NLPの前提」。</span>
+      </button>
       <button class="mode" data-go="single" type="button">
         <span class="mk">A</span><b>単発ドリル</b>
         <span>発言ひとつに、指定された1パターンで返す。${PATTERNS.length}種類をひととおり回します。</span>
@@ -1577,7 +1604,7 @@ function reviewHTML(models, point, p){
       <span class="g ${fb.cls}">${fb.glyph}</span>
       <span class="t"><b>${fb.label}</b>${fb.desc}</span>
     </div>
-    ${fb.key === "start" ? `<p class="premise">失敗はありません。あるのはフィードバックだけです。<span>— NLPの前提より</span></p>` : ""}
+    ${fb.key === "start" ? `<p class="premise">うまくいかなかった結果も、次へのヒント（フィードバック）です。<span>— NLPの前提より</span></p>` : ""}
 
     <div class="btnrow">
       <button class="btn" id="nextq" type="button">記録して次へ</button>
@@ -1675,7 +1702,7 @@ function stackVerdictHTML(){
     start:"3文を組もうとしたこと自体が前進です。模範のつないだ形を、通しで一度声に出してみてください。"
   }[fb.key];
   return `<div class="verdict"><span class="g ${fb.cls}">${fb.glyph}</span><span class="t"><b>${label}</b>${desc}</span></div>
-    ${fb.key === "start" ? `<p class="premise">失敗はありません。あるのはフィードバックだけです。<span>— NLPの前提より</span></p>` : ""}`;
+    ${fb.key === "start" ? `<p class="premise">うまくいかなかった結果も、次へのヒント（フィードバック）です。<span>— NLPの前提より</span></p>` : ""}`;
 }
 
 /* ===================== メタモデル：長文ワーク ===================== */
@@ -1808,7 +1835,7 @@ function metaVerdictHTML(){
     start:"問いを立てようとしたこと自体が前進です。模範の質問を一度、声に出してみてください。"
   }[fb.key];
   return `<div class="verdict"><span class="g ${fb.cls}">${fb.glyph}</span><span class="t"><b>${label}</b>${desc}</span></div>
-    ${fb.key === "start" ? `<p class="premise">失敗はありません。あるのはフィードバックだけです。<span>— NLPの前提より</span></p>` : ""}`;
+    ${fb.key === "start" ? `<p class="premise">うまくいかなかった結果も、次へのヒント（フィードバック）です。<span>— NLPの前提より</span></p>` : ""}`;
 }
 
 function metaDoneHTML(){
@@ -1875,6 +1902,161 @@ function referenceHTML(){
   </div>`;
 }
 
+/* ===================== テキスト（読む） ===================== */
+/* 教科書にある内容だけを載せる。説明と例はこのアプリで書き起こしたもの。 */
+const TEXTS = [
+  { id:"t0", no:"0", title:"NLPってなに？", min:3, body:`<div class="hitokoto">NLPは、うまくいっている人が「どう感じて、どう考えて、どんな言葉を使っているか」を調べて、だれでもまねできるようにまとめたものです。</div>
+
+<h3>名前の意味</h3>
+<p>NLPは、英語の3つの言葉の頭文字です。</p>
+<div class="kvs">
+<div class="kv"><span class="k">Neuro（ニューロ）＝ 神経</span><span class="v">人は、目・耳・肌・鼻・舌の「五感」を使って、まわりのことを感じとっています。</span></div>
+<div class="kv"><span class="k">Linguistic（リングイスティック）＝ 言葉</span><span class="v">感じとったことに、言葉や、表情・声・しぐさで「これはこういうことだ」と意味をつけています。</span></div>
+<div class="kv"><span class="k">Programming（プログラミング）＝ やり方のくせ</span><span class="v">その感じ方や意味のつけ方には「くせ」があります。そのくせを、なりたい自分に向けて作りかえていきます。</span></div>
+</div>
+<p>まとめると、<b>「感じ方と言葉のくせを、なりたい自分に向けて作りかえる方法」</b>です。</p>
+
+<h3>NLPの3つの顔</h3>
+<p>教科書では、NLPを3つの見方で説明しています。</p>
+<ul>
+<li><b>心の持ち方</b> … 好奇心や冒険心をもって、毎日を学びのチャンスとして受けとめる気持ち</li>
+<li><b>やり方</b> … 「うまくいく行動には、うまくいくしくみがある」と考えて、そのしくみを見つけるやり方</li>
+<li><b>道具</b> … 見たことや感じたことを整理して、使いやすくする道具</li>
+</ul>
+
+<h3>どうやって生まれたか</h3>
+<p>NLPは1970年代のアメリカで、<b>リチャード・バンドラー</b>と<b>ジョン・グリンダー</b>の2人が作りました。</p>
+<p>2人は、心理療法（心の悩みを助ける仕事）で、とてもよい結果を出していた人たちを観察しました。その人たちの話し方や動き方をよく見て、まねできる形にまとめたのです。このように「上手な人のやり方を写しとること」を<b>モデリング</b>といいます。</p>
+<ul>
+<li><b>フリッツ・パールズ</b>と<b>バージニア・サティア</b>の話し方 → <b>メタモデル</b>（話の中のぬけている所や決めつけを、質問ではっきりさせる方法）</li>
+<li><b>ミルトン・エリクソン</b>の話し方 → <b>ミルトンモデル</b>（あえてふんわり話して、相手に自分で考えてもらう方法）</li>
+</ul>
+<p>このアプリのドリルは、この2つを練習するものです。今ではコーチング、学校、スポーツ、仕事など、いろいろな場面で使われています。</p>
+
+<h3>NLPで学ぶこと</h3>
+<p>このテキストでは、NLPで学ぶことを4つに分けて見ていきます。</p>
+<div class="kvs">
+<div class="kv"><span class="k">相手との信頼をつくる</span><span class="v">ラポール、キャリブレーション</span></div>
+<div class="kv"><span class="k">感じ方を知る</span><span class="v">表象システム、サブモダリティ</span></div>
+<div class="kv"><span class="k">言葉を使う</span><span class="v">メタモデル、ミルトンモデル</span></div>
+<div class="kv"><span class="k">気持ちと行動を変える</span><span class="v">アンカリング、TOTEモデル、リフレーミング、よくまとめられたゴール</span></div>
+</div>
+<p>そして、ぜんぶの土台になる考え方が、次の章の<b>「NLPの前提」</b>です。</p>
+
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>「NLPで学ぶこと」の4つの分け方と、説明の文章は、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` },
+  { id:"t1", no:"1", title:"NLPの前提", min:10, body:`<div class="hitokoto">「前提」とは、NLPを使うときの<b>ものの見方のスタート地点</b>です。教科書には8つあります。</div>
+<p class="note" style="margin:0">タップすると開きます。順番は教科書と同じです。</p>
+<div class="reflist">
+<details class="ref pp"><summary><span class="no">01</span>起きたことは変えられない。でも、受けとめ方は変えられる</summary><div class="body">
+<div class="kv"><span class="k">むずかしく言うと</span><span class="v">体験の中身より、体験のしかたを変える力のほうが価値があることが多い</span></div>
+<div class="kv"><span class="k">ひとことで</span><span class="v">過去に起きたことは、あとから変えられません。でも、それを「どう思い出すか」「どう受けとめるか」は、自分で変えられます。</span></div>
+<div class="kv"><span class="k">たとえば</span><span class="v">みんなの前で失敗したこと。「はずかしかったこと」として思い出すと、今もいやな気持ちになります。「あれで度胸がついた」と思い出すと、気持ちは軽くなります。起きたことは同じです。</span></div>
+<div class="kv"><span class="k">コーチングの場面で</span><span class="v">「何があったのか」を何度も聞くより、「そのことを、今どう感じているか」に目を向けます。</span></div>
+<div class="kv"><span class="k">つながり</span><span class="v">リフレーミング、サブモダリティ（準備中）</span></div>
+</div></details>
+<details class="ref pp"><summary><span class="no">02</span>相手にどう伝わったかが、伝えたことの結果になる</summary><div class="body">
+<div class="kv"><span class="k">むずかしく言うと</span><span class="v">コミュニケーションの意味は、あなたが受け取る反応にある</span></div>
+<div class="kv"><span class="k">ひとことで</span><span class="v">自分が「こう言ったつもり」でも、相手がどう受けとったかが、本当の結果です。</span></div>
+<div class="kv"><span class="k">たとえば</span><span class="v">元気づけようと「大丈夫だよ」と言ったのに、友だちが悲しそうな顔をした。相手には「わかってもらえない」と伝わったのかもしれません。</span></div>
+<div class="kv"><span class="k">コーチングの場面で</span><span class="v">相手の反応が思っていたのとちがったら、相手のせいにしないで、自分の言い方を変えてもう一度ためします。</span></div>
+<div class="kv"><span class="k">つながり</span><span class="v">ラポール、キャリブレーション（準備中）</span></div>
+</div></details>
+<details class="ref pp"><summary><span class="no">03</span>感じていることは、五感の言葉で表せる</summary><div class="body">
+<div class="kv"><span class="k">むずかしく言うと</span><span class="v">人が区別できることは、すべて五感を通して表せる</span></div>
+<div class="kv"><span class="k">ひとことで</span><span class="v">私たちが感じていることは、「見える」「聞こえる」「体で感じる」「におい」「味」のどれかで言い表せます。</span></div>
+<div class="kv"><span class="k">たとえば</span><span class="v">「なんとなく不安」も、よく聞いてみると「胸のあたりが重い」「失敗する場面が頭にうかぶ」のように、五感の言葉で言えるようになります。</span></div>
+<div class="kv"><span class="k">コーチングの場面で</span><span class="v">ぼんやりした悩みを、「何が見える？」「何が聞こえる？」「体のどこで感じる？」と聞いて、はっきりさせていきます。</span></div>
+<div class="kv"><span class="k">つながり</span><span class="v">表象システム、サブモダリティ（準備中）</span></div>
+</div></details>
+<details class="ref pp"><summary><span class="no">04</span>変わるための力は、もう自分の中にある</summary><div class="body">
+<div class="kv"><span class="k">むずかしく言うと</span><span class="v">人が変化を起こすために必要なリソースは、すでにその人の中にある</span></div>
+<div class="kv"><span class="k">ひとことで</span><span class="v">変わるための力（リソース）は、外からもらうものではありません。もう自分の中にあります。</span></div>
+<div class="kv"><span class="k">たとえば</span><span class="v">「自信がない」と言う人にも、ドキドキしながら最後までやりきった日があります。そのときの力は、今もなくなっていません。</span></div>
+<div class="kv"><span class="k">コーチングの場面で</span><span class="v">答えを教えるのではなく、その人がもともと持っている力や経験を、いっしょに見つけます。</span></div>
+<div class="kv"><span class="k">つながり</span><span class="v">アンカリング（準備中）<br><button class="linkbtn" data-seq="aware" type="button">連結ドリル「気づきを渡す」で練習する →</button></span></div>
+</div></details>
+<details class="ref pp"><summary><span class="no">05</span>地図は領土ではない（見えている世界は、人それぞれ）</summary><div class="body">
+<div class="kv"><span class="k">ことばの意味</span><span class="v">「領土」は本当の世界。「地図」は、その人の頭の中にある世界のことです。</span></div>
+<div class="kv"><span class="k">ひとことで</span><span class="v">人は、本当の世界をそのまま見ているのではありません。自分の目や耳、思いこみを通して、頭の中に作った「地図」を見ています。</span></div>
+<div class="kv"><span class="k">たとえば</span><span class="v">同じ雨の日でも、遠足の日の子どもには「最悪」、畑をやっている人には「ありがたい」。雨は同じなのに、頭の中の地図がちがいます。</span></div>
+<div class="kv"><span class="k">コーチングの場面で</span><span class="v">相手の話を「本当にあったこと」ではなく「その人の地図」として聴きます。地図がまちがっていると言わずに、まだ地図にのっていない道をいっしょに探します。</span></div>
+<div class="kv"><span class="k">つながり</span><span class="v">メタモデル（準備中）<br><button class="linkbtn" data-go="metapick" type="button">メタモデルの長文ワークで練習する →</button></span></div>
+</div></details>
+<details class="ref pp"><summary><span class="no">06</span>人の大切さは変わらない。見直すのは行動</summary><div class="body">
+<div class="kv"><span class="k">むずかしく言うと</span><span class="v">人の肯定的な価値は一定。問われるのは、その反応がふさわしいかどうか</span></div>
+<div class="kv"><span class="k">ひとことで</span><span class="v">人そのものの大切さは、いつも同じです。見直すのは「その場でとった気持ちや行動が、合っていたかどうか」です。</span></div>
+<div class="kv"><span class="k">たとえば</span><span class="v">友だちをたたいてしまった子。「悪い子」なのではありません。「たたく」という行動が、その場に合っていなかったのです。</span></div>
+<div class="kv"><span class="k">コーチングの場面で</span><span class="v">行動については話しても、その人自身をダメだと決めつけません。本人が自分を責めているときも、「その人」と「行動」を分けて考えます。</span></div>
+<div class="kv"><span class="k">つながり</span><span class="v"><button class="linkbtn" data-seq="blame" type="button">連結ドリル「責めをほどく」で練習する →</button></span></div>
+</div></details>
+<details class="ref pp"><summary><span class="no">07</span>どんな行動にも、自分を守ろうとする理由がある</summary><div class="body">
+<div class="kv"><span class="k">むずかしく言うと</span><span class="v">すべての行動には肯定的な意図があり、その価値が活きる状況がある</span></div>
+<div class="kv"><span class="k">ひとことで</span><span class="v">困った行動にも、その人を守ろうとする理由があります。そして場面が変われば、その行動が役に立つこともあります。</span></div>
+<div class="kv"><span class="k">たとえば</span><span class="v">宿題をついあとまわしにしてしまう人。その奥には「失敗してがっかりしたくない」という気持ちがあります。その慎重さは、別の場面では「危ないことに気づく力」になります。</span></div>
+<div class="kv"><span class="k">コーチングの場面で</span><span class="v">行動をやめさせる前に、「それは、あなたの何を守ってくれているの？」と聞きます。</span></div>
+<div class="kv"><span class="k">つながり</span><span class="v">リフレーミング（準備中）</span></div>
+</div></details>
+<details class="ref pp"><summary><span class="no">08</span>うまくいかなかった結果も、次へのヒントになる</summary><div class="body">
+<div class="kv"><span class="k">むずかしく言うと</span><span class="v">フィードバック vs. 失敗</span></div>
+<div class="kv"><span class="k">ひとことで</span><span class="v">思いどおりの結果でも、そうでなくても、結果は「そのやり方をしたら、こうなった」ということです。うまくいかなかったときは、それを次のやり方を決めるヒント（フィードバック）にします。</span></div>
+<div class="kv"><span class="k">たとえば</span><span class="v">早起きが3日で終わった。「自分は意志が弱い」ではありません。「このやり方だと3日続く」とわかったのです。それなら、やり方を変えてためせばいいのです。</span></div>
+<div class="kv"><span class="k">コーチングの場面で</span><span class="v">うまくいかなかった話を聞いたら、責めるのではなく、「次にどうするか」を決める材料として、いっしょに見ます。</span></div>
+<div class="kv"><span class="k">つながり</span><span class="v">TOTEモデル（準備中）</span></div>
+</div></details>
+</div>
+
+<h3>学習の4段階</h3>
+<p>教科書では、前提のすぐあとに「何かができるようになるまでの4つの段階」が出てきます。自転車に乗れるようになるまでで考えてみましょう。</p>
+<div class="kvs">
+<div class="kv"><span class="k">1 ─ 無意識的無能</span><span class="v">できないことに、まだ気づいていない（自転車に乗ったことがない）</span></div>
+<div class="kv"><span class="k">2 ─ 意識的無能</span><span class="v">できないとわかっている（乗ってみたら、ころんだ）</span></div>
+<div class="kv"><span class="k">3 ─ 意識的有能</span><span class="v">気をつければできる（ハンドルとペダルに集中すれば乗れる）</span></div>
+<div class="kv"><span class="k">4 ─ 無意識的有能</span><span class="v">考えなくても、自然にできる（友だちと話しながらでも乗れる）</span></div>
+</div>
+<p>ドリルで「まず声に出して言う」をくり返すのは、3から4に進むためです。セッション中に、考えなくても言葉が出てくるようになるのが目標です。</p>
+
+<h3>おわりに</h3>
+<p>このアプリが◯や✕をつけず、ヒント（フィードバック）を返す形になっているのは、前提08の考え方にそっているからです。うまくいかなかった答えも、次にどう言うかを決める大事なヒントです。</p>
+
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>前提の順番は教科書と同じです。やさしい言い方・説明・例は、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` }
+];
+const TX = {}; TEXTS.forEach(t => TX[t.id] = t);
+
+function textbookHTML(){
+  return `
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="stepbar"><span>テキスト — 目次</span><span class="sp"></span>
+      <button class="themebtn" data-go="home" type="button">← 戻る</button></div>
+    <p class="muted" style="margin:0">NLPの考え方を、教科書の順番どおりに読めます。読み終えた章には「読んだ」の印がつきます。印は、この端末の中だけに残ります。</p>
+    <div class="modes">
+      ${TEXTS.map(t => `
+        <button class="mode" data-text="${t.id}" type="button">
+          <span class="mk">${t.no}</span><b>${esc(t.title)}${store.read.includes(t.id) ? `<span class="rd">読んだ</span>` : ""}</b>
+          <span>読む目安 ${t.min}分</span>
+        </button>`).join("")}
+    </div>
+    <div class="card"><p class="note" style="margin:0">続きの章は、教科書の順番で少しずつ足していきます。</p></div>
+    <p class="note" style="margin:0">※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</p>
+  </div>`;
+}
+
+function chapterHTML(){
+  const t = TX[curText] || TEXTS[0];
+  const i = TEXTS.indexOf(t);
+  const nx = TEXTS[i + 1];
+  return `
+  <div class="tx">
+    <div class="stepbar"><span>テキスト — ${t.no}章</span><span class="sp"></span>
+      <button class="themebtn" data-go="textbook" type="button">← 目次</button></div>
+    <h2>${esc(t.title)}</h2>
+    ${t.body}
+    <div class="btnrow">
+      ${nx ? `<button class="btn" data-read="${t.id}" data-next="${nx.id}" type="button">読み終えた — 次へ（${esc(nx.title)}）</button>`
+           : `<button class="btn" data-read="${t.id}" type="button">読み終えた — 目次へ</button>`}
+    </div>
+  </div>`;
+}
+
 function statsHTML(){
   const total = store.records.length;
   const weak = weakestIds(3).map(id => P[id].name);
@@ -1938,6 +2120,19 @@ function wire(){
       if(g === "single"){ start("single", false); }
       else if(g === "weak"){ start("single", true); }
       else { view = g; render(); }
+    });
+  });
+
+  app.querySelectorAll("[data-text]").forEach(el => {
+    el.addEventListener("click", () => { curText = el.dataset.text; view = "chapter"; render(); });
+  });
+  app.querySelectorAll("[data-read]").forEach(el => {
+    el.addEventListener("click", () => {
+      const id = el.dataset.read;
+      if(!store.read.includes(id)){ store.read.push(id); save(); }
+      if(el.dataset.next){ curText = el.dataset.next; view = "chapter"; }
+      else { view = "textbook"; }
+      render();
     });
   });
 
