@@ -1,7 +1,7 @@
 {
-  "name": "ミルトン道場",
-  "short_name": "ミルトン道場",
-  "description": "ミルトンモデルとメタモデルの実践ドリル",
+  "name": "NLP道場",
+  "short_name": "NLP道場",
+  "description": "NLPを読んで、練習する道場",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
