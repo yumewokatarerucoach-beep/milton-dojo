@@ -1238,6 +1238,101 @@ const MONO = [
 ];
 
 /* ===================== 記録（この端末の localStorage のみ） ===================== */
+/* ===================== リフレーミング（3章のドリル） ===================== */
+/* 教科書の2種類（内容/意味・状況）を1問で両方やる。発言はすべて架空。 */
+const RF_SKILLS = [{ id:"rfm", name:"意味のリフレーミング" }, { id:"rfs", name:"状況のリフレーミング" }];
+const RF_CHECKS = [
+  "相手の言葉を否定せずに、受け取ってから別の見方を足せたか",
+  "意味と状況の、両方が出せたか",
+  "出した見方が、合計で3つ以上になったか"
+];
+const R = (kind,u,meaning,situation,point) => ({kind,u,meaning,situation,point});
+const REFRAMES = [
+  /* --- 自分の欠点 --- */
+  R("自分の欠点","私、優柔不断で、なかなか決められないんです。",
+    ["決める前に、いくつもの可能性が見えているということですね。","選ぶ前に、相手の立場まで考えているのかもしれません。","時間をかけて決めたぶん、決めたあとに後悔が少ないのでは。"],
+    ["案をいくつも比べる仕事。","金額の大きい契約や、やり直しがきかない決定。","チームの意見をまとめる役。"],
+    "「決められない」を「見えすぎている」に置き換えると、本人の中の事実は変わらないまま、意味だけが変わる。"),
+  R("自分の欠点","何でも自分で抱え込んでしまって、人に頼れません。",
+    ["最後まで自分でやり切る力があるということですね。","人に迷惑をかけたくない気持ちが強いのかもしれません。","任された責任を、まっすぐ受け止めているとも言えます。"],
+    ["一人で立ち上げる仕事。","誰も見ていないところの品質を守る役。","締切直前の踏ん張りどころ。"],
+    "「頼れない」の奥にある肯定的な意図（迷惑をかけたくない）を拾うのが、意味のリフレーミング。"),
+  R("自分の欠点","頑固で、融通が利かないとよく言われます。",
+    ["自分の基準がはっきりしているということですね。","まわりに流されない強さがあるのかもしれません。","一度決めた約束を守る人だとも言えます。"],
+    ["品質や安全を管理する仕事。","交渉で、最後の一線を守る場面。","何年もかかる取り組みを続ける役。"],
+    "短所の言葉をそのまま使わず、同じ行動を別の名前で呼び直す。"),
+  R("自分の欠点","せっかちで、待つのが苦手ですぐ動いてしまいます。",
+    ["動き出しが早いということですね。","目の前の機会を逃さない人なのかもしれません。","まわりのスピードを上げる力にもなります。"],
+    ["初動の早さが結果を左右する仕事。","試作をたくさん回す場面。","短い締切の仕事。"],
+    "「早い」は場面によって長所にも短所にもなる。だから状況のリフレーミングが効く。"),
+  R("自分の欠点","人見知りで、初対面だと緊張して話せません。",
+    ["相手をよく観察してから話す人ということですね。","軽い言葉で済ませない誠実さがあるのかもしれません。","信頼を大事にしているとも言えます。"],
+    ["一対一の面談。","相手の話を聴くことが中心の仕事。","時間をかけて信頼を積む営業。"],
+    "「話せない」を「観察している」と見ると、次にやることが具体的になる。"),
+  R("自分の欠点","完璧主義で、細かいところが気になって終われません。",
+    ["自分の中の基準が高いということですね。","見落としが少ない人だとも言えます。","仕上がりに責任を持っているのかもしれません。"],
+    ["文章の校正や検査の仕事。","安全に関わる最終確認。","人の命やお金が関わる書類。"],
+    "「終われない」ことは変えずに、その力が活きる場所を一緒に探す。"),
+  R("自分の欠点","飽きっぽくて、何をやっても続きません。",
+    ["切り替えが早いということですね。","興味の幅が広いのかもしれません。","合わないものに早く気づける力もあります。"],
+    ["新しいことの立ち上げ。","いくつもの案件を並行して回す仕事。","企画のたたき台をたくさん作る場面。"],
+    "続かなかった事実は否定しない。その動き方が武器になる場所に目を向ける。"),
+  R("自分の欠点","感情的で、すぐ顔に出てしまいます。",
+    ["正直な人ということですね。","気持ちが相手に伝わりやすいとも言えます。","それだけ心が動いているのかもしれません。"],
+    ["人前で熱を伝える場面。","子どもや初心者に向き合うとき。","誰かの喜びを一緒に喜ぶ場面。"],
+    "本人が恥じていることほど、まず受け取ってから別の見方を足す。"),
+  /* --- 受け入れがたい出来事 --- */
+  R("受け入れがたい出来事","一年かけて準備した試験に落ちました。",
+    ["それだけ本気で挑んだということですね。","何が足りなかったかが、はっきり見えたとも言えます。","次の作戦が、前より具体的に立てられます。"],
+    ["同じ道で悩む人を支えるとき。","後輩に教えるときの実例として。","やり方そのものを見直す機会として。"],
+    "出来事そのものは変えられない。変えられるのは、その出来事の置き場所。"),
+  R("受け入れがたい出来事","長く担当していた仕事を、急に外されました。",
+    ["別の力を期待されているのかもしれません。","いったん立て直す時間をもらったとも言えます。","抱えていた荷物が、ひとつ減ったのも事実です。"],
+    ["新しい分野を覚える時期として。","家族と過ごす時間として。","次の企画を仕込む時間として。"],
+    "納得できない出来事に、無理に前向きな意味をつけない。言えるのは、事実として何が増えたか。"),
+  R("受け入れがたい出来事","引っ越しで、仲の良かった友達と離れてしまいました。",
+    ["離れても続く関係かどうかが分かる時間ですね。","新しい出会いの余白ができたとも言えます。","それだけ大事な友達だったということです。"],
+    ["遠くに友達がいる強みとして。","新しい場所で、自分を作り直す機会として。"],
+    "「大事だった」と認めることも、立派なリフレーミング。"),
+  R("受け入れがたい出来事","部活でレギュラーを外されました。",
+    ["外から全体が見える位置に立ったということですね。","悔しさが残るのは、本気だったからです。","別の役割が見えてくるかもしれません。"],
+    ["作戦や分析を担う役として。","下級生を育てる役として。","来年に向けた準備の期間として。"],
+    "感情を打ち消さずに、「悔しい＝本気」の意味づけを渡す。"),
+  R("受け入れがたい出来事","転職して、給料が下がりました。",
+    ["お金以外のものを選んだということですね。","納得できる働き方を取ったとも言えます。","自分が何を大事にしているかが、はっきりしました。"],
+    ["新しい分野を学ぶ時間として。","家族といる時間として。","長い目で見たときの土台づくりとして。"],
+    "選択の結果を「損」ではなく「交換」として置き直す。"),
+  R("受け入れがたい出来事","大事なプレゼンで、頭が真っ白になりました。",
+    ["それだけ大事に思っていたということですね。","準備のどこが足りなかったかが分かりました。","同じ経験をした人の気持ちが分かる人になります。"],
+    ["緊張する人に寄り添う場面。","自分の失敗談として人に話すとき。","本番前の準備を作り直す機会として。"],
+    "失敗の記憶は消せない。使い道を変えることはできる。"),
+  R("受け入れがたい出来事","親の介護が始まって、自分の時間がなくなりました。",
+    ["大事にしたいものを、自分で選んでいるということですね。","限られた時間の使い方が、はっきりしてきたとも言えます。","一緒に過ごす時間そのものでもあります。"],
+    ["同じ立場の人の相談相手として。","優先順位を決める力が育つ場面として。"],
+    "きれいにまとめようとしない。相手がうなずくまで、別の見方を出し続ける。"),
+  /* --- 苦手な人・嫌いな人 --- */
+  R("苦手な人・嫌いな人","細かいことにいちいち口を出す上司が苦手です。",
+    ["見落としを拾ってくれているとも言えますね。","それだけ関心を持たれているのかもしれません。","基準を持っている人だということです。"],
+    ["品質が問われる案件で組むとき。","抜けが致命傷になる仕事で。","自分がざっくり進めたい時の補い役として。"],
+    "苦手な人のリフレーミングは、好きになるためではなく、付き合い方の選択肢を増やすためにやる。"),
+  R("苦手な人・嫌いな人","人の話を最後まで聞かない同僚がいます。",
+    ["自分の考えをはっきり持っている人ですね。","決断が早いとも言えます。","話の先が見えているのかもしれません。"],
+    ["誰も決めたがらない場面で。","押し切る交渉のとき。","時間がない中で方向を決めるとき。"],
+    "相手を変える話にしない。こちらの見方を増やすと、対応の幅が変わる。"),
+  R("苦手な人・嫌いな人","何を言っても、まず否定から入る人がいます。",
+    ["リスクを先に見つける人ということですね。","すぐに鵜呑みにしない慎重さがあります。","本気で考えているから、引っかかるのかもしれません。"],
+    ["契約や投資を確認する役として。","計画の穴を探す場面で。","新しい企画を出す前の壁打ち相手として。"],
+    "「否定」を「確認」と呼び直すと、相手の言葉が使える情報に変わる。"),
+  R("苦手な人・嫌いな人","すぐ感情的に怒る人が、職場にいます。",
+    ["何かを大事にしているということですね。","隠さずに出す人だとも言えます。","そこに強い思いがあるのかもしれません。"],
+    ["本音が早く出てほしい場面で。","熱が必要な立ち上げのとき。"],
+    "行動は肯定しなくていい。その奥にある意図だけを見つけに行く。"),
+  R("苦手な人・嫌いな人","何も言わず、指示を待つだけの後輩がいます。",
+    ["慎重に見ているということですね。","指示をきちんと守る人だとも言えます。","和を乱さないようにしているのかもしれません。"],
+    ["手順どおりが命の仕事で。","記録や管理を任せるとき。","経験者と組ませる場面で。"],
+    "「動かない」を「待っている」と見ると、こちらの渡し方を変えられる。")
+];
+
 const KEY = "milton-drill-v1";
 const MAX_RECORDS = 400;
 let store = { records: [], timer: 0, fs: 1, level: "normal", read: [] };
@@ -1431,6 +1526,106 @@ function shakyoHTML(lines){
   </div>`;
 }
 
+
+/* ---- リフレーミング・ドリルの出題と画面 ---- */
+let curRf = null;        // 出題中のリフレーミング問題
+let rfStep = 1;          // 1 意味 / 2 状況 / 3 模範とふりかえり
+let rfRecent = [];       // 直近に出した問題（重複回避）
+
+function pickRf(){
+  const pool = REFRAMES.filter((_,i) => !rfRecent.includes(i));
+  const list = pool.length ? pool : REFRAMES;
+  const d = list[Math.floor(Math.random() * list.length)];
+  rfRecent.push(REFRAMES.indexOf(d));
+  if(rfRecent.length > 6) rfRecent.shift();
+  return d;
+}
+function startRf(){
+  mode = "reframe";
+  curRf = pickRf();
+  rfStep = 1;
+  checked = [false,false,false];
+  expired = false;
+  view = "reframe";
+  render();
+  startTimer();
+}
+function rfTaskHTML(){
+  if(rfStep === 1){
+    return `<div class="task">
+      <span class="lbl">お題 / ${esc(curRf.kind)}</span>
+      <h2>意味のリフレーミング</h2>
+      <div class="form">この発言を否定せずに受け取ったうえで、<b>他にどんな意味・価値があるか</b>を足して返してください。</div>
+      <div class="form" style="color:var(--ink-3)">教科書の質問フレーズ：それにはどのような肯定的な意図がありますか？ ／ それには他にどのような意味がありますか？ ／ それには他にどのような価値がありますか？</div>
+    </div>`;
+  }
+  return `<div class="task">
+    <span class="lbl">お題 / ${esc(curRf.kind)}</span>
+    <h2>状況のリフレーミング</h2>
+    <div class="form">同じ発言について、<b>どんな場面でなら役に立つか</b>を返してください。</div>
+    <div class="form" style="color:var(--ink-3)">教科書の質問フレーズ：それはどのような仕事で活かせますか？ ／ それは他のどのような状況で役に立ちますか？</div>
+  </div>`;
+}
+function rfHTML(){
+  const d = curRf;
+  const n = checked.filter(Boolean).length;
+  const fb = feedbackOf(n);
+  return `
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="stepbar">
+      <span>リフレーミング</span>
+      <span class="dot on"></span>
+      <span class="dot ${rfStep >= 2 ? "on" : ""}"></span>
+      <span class="dot ${rfStep >= 3 ? "on" : ""}"></span>
+      <span class="sp"></span><button class="themebtn" data-go="home" type="button">← 戻る</button>
+    </div>
+
+    <div class="utter"><div class="who">クライアント役</div><p>「${esc(d.u)}」</p></div>
+
+    ${rfStep < 3 ? `
+      ${rfTaskHTML()}
+      <div class="speak"><span class="n">1</span>まず声に出して言う</div>
+      ${timerHTML()}
+      <div class="speak"><span class="n">2</span>それから書く</div>
+      <div class="mictip"><b>声で入れてもいいです。</b>iPhone はキーボード右下のマイク、Android は Gboard のマイク、Mac は fn を 2 回で、喋った内容がそのまま入ります。</div>
+      <textarea id="rfans" placeholder="ここに書く"></textarea>
+      <button class="btn" id="${rfStep === 1 ? "rfnext" : "rfreveal"}" type="button">${rfStep === 1 ? "次へ — 状況のリフレーミング" : "答え合わせ"}</button>
+    ` : `
+      <hr class="hr">
+      <div class="model">
+        <h3>模範解答 — 意味</h3>
+        <ul>${d.meaning.map(m => `<li>${esc(m)}</li>`).join("")}</ul>
+      </div>
+      <div class="model">
+        <h3>模範解答 — 状況</h3>
+        <ul>${d.situation.map(m => `<li>${esc(m)}</li>`).join("")}</ul>
+        <div class="point"><b>ポイント：</b>${esc(d.point)}</div>
+      </div>
+
+      <div>
+        <p class="eyebrow" style="margin:0 0 9px">ふりかえり — 入っていたものをタップ</p>
+        <div class="checks">
+          ${RF_CHECKS.map((c,i) => `
+            <button class="chk" type="button" data-chk="${i}" aria-pressed="${checked[i]}">
+              <span class="box">✓</span><span>${esc(c)}</span>
+            </button>`).join("")}
+        </div>
+      </div>
+
+      <div class="verdict">
+        <span class="g ${fb.cls}">${fb.glyph}</span>
+        <span class="t"><b>${fb.label}</b>${fb.desc}</span>
+      </div>
+      ${fb.key === "start" ? `<p class="premise">うまくいかなかった結果も、次へのヒント（フィードバック）です。<span>— NLPの前提より</span></p>` : ""}
+
+      <div class="btnrow">
+        <button class="btn" id="rfnextq" type="button">記録して次へ</button>
+        <button class="btn ghost" data-go="home" type="button">終える</button>
+      </div>
+    `}
+  </div>`;
+}
+
 /* ===================== 画面 ===================== */
 function render(){
   if(view === "home") app.innerHTML = homeHTML();
@@ -1443,6 +1638,7 @@ function render(){
   else if(view === "stats") app.innerHTML = statsHTML();
   else if(view === "textbook") app.innerHTML = textbookHTML();
   else if(view === "chapter") app.innerHTML = chapterHTML();
+  else if(view === "reframe") app.innerHTML = rfHTML();
   wire();
   window.scrollTo({top:0, behavior: view === "drill" ? "auto" : "auto"});
 }
@@ -1461,7 +1657,7 @@ function homeHTML(){
     <div class="modes">
       <button class="mode" data-go="textbook" type="button">
         <span class="mk">T</span><b>テキスト（読む）</b>
-        <span>NLPの考え方を、やさしい言葉で読めます。いま読めるのは「NLPってなに？」と「NLPの前提」。</span>
+        <span>NLPの考え方を、教科書の順番で読めます。いま読めるのは0章〜3章（NLPってなに？／NLPの前提／TOTEモデル／リフレーミング）。</span>
       </button>
       <button class="mode" data-go="single" type="button">
         <span class="mk">A</span><b>単発ドリル</b>
@@ -1470,6 +1666,10 @@ function homeHTML(){
       <button class="mode" data-go="stackpick" type="button">
         <span class="mk">B</span><b>連結ドリル</b>
         <span>3文つないで、短い誘導のかたまりを組みます。セッションの局面ごとに<b>${SEQS.length}つの型</b>（安心をつくる／深める／抵抗をほどく／リソースを起こす／行動へ渡す／気づきを渡す／その場で動かす／責めをほどく）。実際に使う形はこっち。</span>
+      </button>
+      <button class="mode" data-go="reframe" type="button">
+        <span class="mk">R</span><b>リフレーミング</b>
+        <span>短所・出来事・苦手な人に、意味と状況の2方向から別の見方を足す練習。${REFRAMES.length}問。3章とセットです。</span>
       </button>
       <button class="mode" data-go="metapick" type="button">
         <span class="mk">M</span><b>メタモデル（長文ワーク）</b>
@@ -2073,7 +2273,70 @@ const TEXTS = [
 <div class="kv"><span class="k">問い 3</span><span class="v">うまくいっていることを1つ選んでください。「もっとうまくいくには？」でもう1回回すなら、次に何を試しますか？</span></div>
 </div>
 
-<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>4つの段階・広げた形・生まれた経緯は教科書に沿っています。言い方・例（自転車）・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` }
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>4つの段階・広げた形・生まれた経緯は教科書に沿っています。言い方・例（自転車）・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` },
+  { id:"t3", no:"3", title:"リフレーミング", min:8, body:`<div class="hitokoto">リフレーミングとは、出来事を囲んでいる<b>枠（フレーム）を変えること</b>。枠が変わると意味づけが変わり、自分の反応も変わります。</div>
+
+<h3>そもそも、意味は後からついている</h3>
+<p>教科書では、こう説明されています。人は出来事をそのまま受け取っているのではなく、自分のフィルターを通して意味をつけている。つまり、<b>出来事そのものには、もともと意味がない</b>。意味をつけているのは自分の方だ、ということです。</p>
+<p>だから、枠を変えれば意味が変わり、意味が変われば反応も変わります。教科書には、こんな言葉が載っています。</p>
+<div class="hitokoto">「問題は問題ではない。問題の捉え方が問題なのだ。」</div>
+
+<h3>目的は「前向きに考える」ことではない</h3>
+<p>ここが、いちばん間違えやすいところです。教科書には、リフレーミングの本当の力は、無理にポジティブに考え直すことではなく、<b>選択肢を増やすこと</b>にある、と書かれています。</p>
+<p>創始者バンドラーの言葉として、選択肢が1つしかないと感じるとき人は身動きが取れず、2つならどちらを選ぶかで悩み、<b>3つ以上あって初めて自由がある</b>、という趣旨が紹介されています。</p>
+<p>つまりリフレーミングは、相手の捉え方を「正しい捉え方」に直す作業ではありません。今ある1つの見方に、別の見方を<b>足していく</b>作業です。</p>
+
+<h3>2つのリフレーミング</h3>
+<p>教科書では、大きく2種類に分けています。どちらも、1章の前提とつながっています。</p>
+<div class="kvs">
+<div class="kv"><span class="k">内容／意味のリフレーミング</span><span class="v">その行動や出来事に、<b>他にどんな意味・価値があるか</b>を見つけます。もとになる前提は「どんな行動にも、自分を守ろうとする理由（肯定的な意図）がある」。</span></div>
+<div class="kv"><span class="k">状況のリフレーミング</span><span class="v">その行動や特徴が、<b>どんな場面でなら役に立つか</b>を見つけます。もとになる前提は「どんな行動にも、その価値が活きる状況がある」。</span></div>
+</div>
+<p><button class="linkbtn" data-text="t1" type="button">1章「NLPの前提」の07を読む →</button></p>
+
+<h3>教科書にある質問フレーズ</h3>
+<p>そのまま使える形で載っています。覚えておくと、セッション中に出てきます。</p>
+<div class="kvs">
+<div class="kv"><span class="k">意味を探す</span><span class="v">それにはどのような肯定的な意図がありますか？<br>それには他にどのような意味がありますか？<br>それには他にどのような価値がありますか？</span></div>
+<div class="kv"><span class="k">状況を探す</span><span class="v">それはどのような仕事で活かせますか？<br>それは他のどのような状況で役に立ちますか？</span></div>
+</div>
+
+<h3>例</h3>
+<div class="kvs">
+<div class="kv"><span class="k">元の枠</span><span class="v">「私は心配性で、先のことばかり気にしてしまう」</span></div>
+<div class="kv"><span class="k">意味を変える</span><span class="v">先に危険に気づける力がある。気にするのは、大事にしたいものがあるから。</span></div>
+<div class="kv"><span class="k">状況を変える</span><span class="v">段取りを組む仕事、人の安全を預かる場面、初めての相手との交渉。</span></div>
+</div>
+<p>大事なのは、どちらか1つに言い換えて終わりにしないこと。<b>見方が3つ以上になって、初めて相手に選ぶ自由が生まれます。</b></p>
+
+<h3>コーチングの場面で</h3>
+<ul>
+<li><b>否定してから始めない。</b>「そんなことないですよ」は、相手の見方を消す言い方になります。まず受け取ってから、別の見方を足します</li>
+<li><b>押しつけない。</b>教科書のワークでも、相手に<b>しっくりくる感じ（一致感）</b>が出るまで続けて、出なければ別の言い方を試します</li>
+<li><b>言い換えを1つで止めない。</b>意味でも状況でも、複数出すほど相手の選択肢が増えます</li>
+</ul>
+
+<h3>教科書のワーク</h3>
+<p>教科書には、人と組んでやるワークが3つあります。参考までに紹介します。</p>
+<ul>
+<li>受け入れがたい事実を述べて、他の人がリフレーミングする（3〜4人）</li>
+<li>自分の欠点を述べて、他の人がリフレーミングする（3〜4人）</li>
+<li>苦手な人・嫌いな人の特徴を書いて紙を交換し、相手の悩みとして話す（2人）</li>
+</ul>
+<p>どれも、しっくりくるまで続けて交代し、最後に感想をシェアする流れです。</p>
+
+<h3>ドリルで練習する</h3>
+<p>この章の練習は、トップの「R リフレーミング」から回せます。短所・出来事・苦手な人の3種類を、意味と状況の両方で言い換える練習です。<br><button class="linkbtn" data-go="reframe" type="button">リフレーミング・ドリルへ →</button></p>
+
+<h3>ふり返ってみよう</h3>
+<p>声に出して答えても、紙に書いてもかまいません。正解はありません。</p>
+<div class="kvs">
+<div class="kv"><span class="k">問い 1</span><span class="v">自分の短所だと思っていることを1つ挙げて、「他にどのような意味がありますか？」に答えてみましょう。</span></div>
+<div class="kv"><span class="k">問い 2</span><span class="v">同じ短所について、「それはどのような仕事で活かせますか？」に答えてみましょう。</span></div>
+<div class="kv"><span class="k">問い 3</span><span class="v">1と2で出た見方を数えてください。3つ以上になりましたか？ 足りなければ、もう1つ探してみましょう。</span></div>
+</div>
+
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>2つのリフレーミング・質問フレーズ・ワークの流れ・「問題は問題ではない。問題の捉え方が問題なのだ。」は教科書に沿っています。言い方・例（心配性）・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` }
 ];
 const TX = {}; TEXTS.forEach(t => TX[t.id] = t);
 
@@ -2143,6 +2406,22 @@ function statsHTML(){
       }).join("")}
     </div>
 
+    ${store.records.some(r => r.p.startsWith("rf")) ? `
+    <div class="card">
+      <p class="eyebrow" style="margin:0 0 4px">リフレーミング — 入った ／ これから</p>
+      ${RF_SKILLS.map(k => {
+        const st = statsFor(k.id);
+        const w = st.n ? [st.o,st.t,st.x].map(v => v/st.n*100) : [0,0,0];
+        return `<div class="statrow">
+          <span class="nm">${esc(k.name)}</span>
+          <span class="ct">${st.n ? `${st.o}／${st.t}／${st.x}` : "—"}</span>
+          <span class="track">
+            <i class="o" style="width:${w[0]}%"></i><i class="t" style="width:${w[1]}%"></i><i class="x" style="width:${w[2]}%"></i>
+          </span>
+        </div>`;
+      }).join("")}
+    </div>` : ""}
+
     ${store.records.some(r => r.p.startsWith("m") && r.p.length === 3) ? `
     <div class="card">
       <p class="eyebrow" style="margin:0 0 4px">メタモデル — 入った ／ これから</p>
@@ -2173,6 +2452,7 @@ function wire(){
       const g = el.dataset.go;
       stopTimer();
       if(g === "single"){ start("single", false); }
+      else if(g === "reframe"){ startRf(); }
       else if(g === "weak"){ start("single", true); }
       else { view = g; render(); }
     });
@@ -2222,6 +2502,19 @@ function wire(){
   const segf = document.getElementById("segfont");
   if(segf) segf.querySelectorAll("button").forEach(b => {
     b.addEventListener("click", () => { store.fs = Number(b.dataset.f); save(); applyFontSize(); render(); });
+  });
+
+  const rf1 = document.getElementById("rfnext");
+  if(rf1) rf1.addEventListener("click", () => { stopTimer(); rfStep = 2; render(); startTimer(); });
+
+  const rf2 = document.getElementById("rfreveal");
+  if(rf2) rf2.addEventListener("click", () => { stopTimer(); rfStep = 3; render(); });
+
+  const rf3 = document.getElementById("rfnextq");
+  if(rf3) rf3.addEventListener("click", () => {
+    const v = verdictOf(checked.filter(Boolean).length);
+    record("rfm", v); record("rfs", v);
+    startRf();
   });
 
   const rv = document.getElementById("reveal");
