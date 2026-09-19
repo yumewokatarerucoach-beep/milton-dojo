@@ -1483,7 +1483,7 @@ const GOALS = [
 
 const KEY = "milton-drill-v1";
 const MAX_RECORDS = 400;
-let store = { records: [], timer: 0, fs: 1, level: "normal", read: [] };
+let store = { records: [], timer: 0, fs: 1, level: "normal", read: [], notes: [] };
 
 function load(){
   try{
@@ -1495,6 +1495,7 @@ function load(){
       if(typeof o.fs === "number" && o.fs > 0.5 && o.fs < 2) store.fs = (o.fs === 1.28 ? 1.33 : o.fs === 0.9 ? 0.88 : o.fs === 1.13 ? 1.15 : o.fs);
       if(["intro","normal","real"].includes(o.level)) store.level = o.level;
       if(Array.isArray(o.read)) store.read = o.read.filter(x => typeof x === "string");
+      if(Array.isArray(o.notes)) store.notes = o.notes.slice(0, MAX_NOTES);
     }
   }catch(e){ /* 使えない環境でもドリルは動く */ }
 }
@@ -1610,6 +1611,7 @@ function pickStack(){
 
 function start(m, weak){
   mode = m;
+  noteSaved = false; noteDraft = null; lastWrite = [];
   weakMode = !!weak;
   cur = m === "stack" ? pickStack() : pickSingle(weakMode);
   checked = [false,false,false];
@@ -1670,7 +1672,7 @@ function shakyoHTML(lines){
   </div>
   <div class="btnrow">
     <button class="btn" id="nextq" data-noscore="1" type="button">次の問題へ</button>
-    <button class="btn ghost" data-go="home" type="button">終える</button>
+    <button class="btn ghost" data-go="home" type="button">終了</button>
   </div>`;
 }
 
@@ -1690,6 +1692,7 @@ function pickRf(){
 }
 function startRf(){
   mode = "reframe";
+  noteSaved = false; noteDraft = null; lastWrite = [];
   curRf = pickRf();
   rfStep = 1;
   checked = [false,false,false];
@@ -1752,6 +1755,7 @@ function rfHTML(){
 
       <div>
         <p class="eyebrow" style="margin:0 0 9px">ふりかえり — 入っていたものをタップ</p>
+        <p class="note" style="margin:0 0 9px">次の問題へ進むと、練習が1回分積み上がります。</p>
         <div class="checks">
           ${RF_CHECKS.map((c,i) => `
             <button class="chk" type="button" data-chk="${i}" aria-pressed="${checked[i]}">
@@ -1766,9 +1770,11 @@ function rfHTML(){
       </div>
       ${fb.key === "start" ? `<p class="premise">うまくいかなかった結果も、次へのヒント（フィードバック）です。<span>— NLPの前提より</span></p>` : ""}
 
+      ${noteBtnHTML()}
+
       <div class="btnrow">
-        <button class="btn" id="rfnextq" type="button">記録して次へ</button>
-        <button class="btn ghost" data-go="home" type="button">終える</button>
+        <button class="btn" id="rfnextq" type="button">次の問題へ</button>
+        <button class="btn ghost" data-go="home" type="button">終了</button>
       </div>
     `}
   </div>`;
@@ -1780,6 +1786,8 @@ function rfHTML(){
 let curGl = null;
 let glStep = 1;          // 1 質問を作る / 2 模範とふりかえり
 let glRecent = [];
+let glAns = {};          // 条件ごとに書いた質問
+let glDone = {};         // 「もう入っている」と判断した条件
 
 function pickGl(){
   const pool = GOALS.filter((_,i) => !glRecent.includes(i));
@@ -1791,12 +1799,19 @@ function pickGl(){
 }
 function startGl(){
   mode = "goal";
+  noteSaved = false; noteDraft = null; lastWrite = [];
   curGl = pickGl();
-  glStep = 1;
+  glStep = 1; glAns = {}; glDone = {};
   checked = [false,false,false];
   expired = false;
   view = "goal";
   render();
+}
+function grabGl(){
+  GOAL_COND.forEach(c => {
+    const el = document.getElementById("gl_" + c.id);
+    if(el) glAns[c.id] = el.value;
+  });
 }
 function glHTML(){
   const d = curGl;
@@ -1817,7 +1832,7 @@ function glHTML(){
       <div class="task">
         <span class="lbl">お題 / 5つの条件をそろえる</span>
         <h2>条件ごとに、質問を1つずつ</h2>
-        <div class="form">この発言が「よくまとめられたゴール」になるように、<b>5つの条件それぞれを埋める質問</b>を作ってください。相手を否定せずに聞きます。</div>
+        <div class="form">この発言が「よくまとめられたゴール」になるように、<b>足りない条件を埋める質問</b>を作ってください。<b>すでに入っている条件は、チェックを押すだけ</b>でかまいません。</div>
       </div>
       <div class="speak"><span class="n">1</span>まず声に出して言う</div>
       <div class="speak"><span class="n">2</span>それから書く</div>
@@ -1827,11 +1842,22 @@ function glHTML(){
           <span class="lbl">条件 ${c.no}</span>
           <h2 style="font-size:1.02rem">${esc(c.name)}</h2>
           <div class="form" style="color:var(--ink-3)">${esc(c.ask)}</div>
-          <textarea id="gl_${c.id}" placeholder="ここに質問を書く"></textarea>
+          <div class="checks">
+            <button class="chk" type="button" data-gdone="${c.id}" aria-pressed="${!!glDone[c.id]}">
+              <span class="box">✓</span><span>この発言には、もう入っている（質問は要らない）</span>
+            </button>
+          </div>
+          ${glDone[c.id] ? "" : `<textarea id="gl_${c.id}" placeholder="ここに質問を書く">${esc(glAns[c.id] || "")}</textarea>`}
         </div>`).join("")}
       <button class="btn" id="glreveal" type="button">答え合わせ</button>
     ` : `
       <hr class="hr">
+      ${GOAL_COND.some(c => glDone[c.id]) ? `
+      <div class="model">
+        <h3>あなたが「もう入っている」とした条件</h3>
+        <ul>${GOAL_COND.filter(c => glDone[c.id]).map(c => `<li>${c.no}. ${esc(c.name)}</li>`).join("")}</ul>
+        <div class="point">残りの条件について、質問の例を見比べてください。すでに入っていると思えた条件も、例を読むと「もう一段くわしく聞ける」ことがあります。</div>
+      </div>` : ""}
       <div class="model">
         <h3>質問の例 — 条件ごと</h3>
         <ul>${GOAL_COND.map((c,i) => `<li><b>${c.no}. ${esc(c.name)}</b><br>${esc(d.qs[i])}</li>`).join("")}</ul>
@@ -1844,6 +1870,7 @@ function glHTML(){
 
       <div>
         <p class="eyebrow" style="margin:0 0 9px">ふりかえり — 入っていたものをタップ</p>
+        <p class="note" style="margin:0 0 9px">次の問題へ進むと、練習が1回分積み上がります。</p>
         <div class="checks">
           ${GOAL_CHECKS.map((c,i) => `
             <button class="chk" type="button" data-chk="${i}" aria-pressed="${checked[i]}">
@@ -1858,15 +1885,164 @@ function glHTML(){
       </div>
       ${fb.key === "start" ? `<p class="premise">うまくいかなかった結果も、次へのヒント（フィードバック）です。<span>— NLPの前提より</span></p>` : ""}
 
+      ${noteBtnHTML()}
+
       <div class="btnrow">
-        <button class="btn" id="glnextq" type="button">記録して次へ</button>
-        <button class="btn ghost" data-go="home" type="button">終える</button>
+        <button class="btn" id="glnextq" type="button">次の問題へ</button>
+        <button class="btn ghost" data-go="home" type="button">終了</button>
       </div>
     `}
   </div>`;
 }
+/* ===================== 言葉帳（自分の言い回しを残す） ===================== */
+/* 「言葉帳に残す」を押して、直してから保存する。この端末の中だけ。外には一切送らない。 */
+const MAX_NOTES = 200;
+let lastWrite = [];      // 答え合わせの直前に書いていた文
+let noteSaved = false;   // この回をもう保存したか
+let noteDraft = null;    // 編集中の下書き（null なら編集欄を閉じている）
+let noteEditIx = null;   // 言葉帳の中で編集している行
+let delAskIx = null;     // 「消す」を1回押した行（もう一度押すと消える）
+let delAllAsk = false;   // 「全部消す」を1回押したか
+let keepScroll = false;  // 画面の位置を保ったまま描き直す
+
+function grabWrite(ids){
+  lastWrite = ids.map(id => {
+    const el = document.getElementById(id);
+    return el && el.value ? el.value.trim() : "";
+  });
+}
+const plain = v => String(v == null ? "" : v).replace(/<[^>]+>/g, "");
+
+/* いま解いている問題から、見出し・発言・言葉の例を取り出す */
+function noteData(){
+  if(mode === "reframe" && curRf){
+    return { head:"リフレーミング（" + curRf.kind + "）", u:curRf.u, labels:["意味","状況"],
+      models:curRf.meaning.map(m => "意味：" + m).concat(curRf.situation.map(m => "状況：" + m)),
+      point:curRf.point };
+  }
+  if(mode === "goal" && curGl){
+    return { head:"ゴールを整える", u:curGl.u, labels:GOAL_COND.map(c => c.no + ". " + c.name),
+      models:GOAL_COND.map((c,i) => c.no + ". " + c.name + "：" + curGl.qs[i]),
+      point:"整った言い方の例：「" + curGl.fixed + "」" };
+  }
+  if(mode === "meta" && curMono){
+    const spot = curMono.spots[spotIx];
+    return { head:"メタモデル｜" + curMono.title + "（" + (spotIx+1) + "／" + curMono.spots.length + "）",
+      u:(M[spot.p] ? M[spot.p].name : ""), labels:["回復質問"],
+      models:spot.models.map(plain), point:plain(spot.point) };
+  }
+  if(mode === "stack" && cur && curSeq){
+    return { head:"連結ドリル｜" + curSeq.name, u:U[cur.u], labels:["3文つないで"],
+      models:[plain(cur.a.join(""))], point:plain(cur.point) };
+  }
+  if(cur && P[cur.p]){
+    return { head:"単発ドリル｜" + P[cur.p].name, u:U[cur.u], labels:["返した言葉"],
+      models:cur.models.map(plain), point:plain(cur.point) };
+  }
+  return null;
+}
+/* 編集欄の初期値：自分が書いた文。書いていなければ空 */
+function draftFromWrite(d){
+  const parts = (lastWrite || []).map((m,i) => {
+    if(!m) return "";
+    const lb = d.labels && d.labels[i] && (lastWrite.length > 1) ? d.labels[i] + "：" : "";
+    return lb + m;
+  }).filter(Boolean);
+  return parts.join("\n");
+}
+function saveNote(text){
+  const d = noteData();
+  if(!d) return;
+  const body = (text || "").trim();
+  if(!body) return;
+  store.notes.unshift({ t:Date.now(), head:d.head, u:d.u, text:body, models:d.models, point:d.point });
+  if(store.notes.length > MAX_NOTES) store.notes = store.notes.slice(0, MAX_NOTES);
+  noteSaved = true; noteDraft = body;
+  save(); render();
+}
+/* 答え合わせに出る「あなたの回答」。その場で直して、言葉帳に残せる */
+function noteBtnHTML(){
+  const d = noteData();
+  const val = noteDraft === null ? draftFromWrite(d || {}) : noteDraft;
+  return `
+  <div class="card" style="display:flex;flex-direction:column;gap:10px">
+    <p class="eyebrow" style="margin:0">あなたの回答 — 直せます</p>
+    <textarea id="notedraft" placeholder="（書かずに進みました。ここに書いてもかまいません）">${esc(val)}</textarea>
+    ${d && d.models.length ? `
+      <p class="note" style="margin:0">言葉の例を下に足す：</p>
+      <div class="checks">
+        ${d.models.map((m,i) => `<button class="chk" type="button" data-useex="${i}"><span>${esc(m)}</span></button>`).join("")}
+      </div>` : ""}
+    <div class="btnrow">
+      <button class="btn ghost sm" id="savenote" type="button">この言い回しを言葉帳に残す</button>
+    </div>
+    ${noteSaved ? `<p class="note" style="margin:0">✓ 言葉帳に残しました。トップの「言葉帳」で読み返せます。直してもう一度押すと、別の1件として残ります。</p>` : ""}
+  </div>`;
+}
+function noteStamp(t){
+  const dt = new Date(t);
+  return dt.getFullYear() + "/" + (dt.getMonth()+1) + "/" + dt.getDate() + " " + String(dt.getHours()).padStart(2,"0") + ":" + String(dt.getMinutes()).padStart(2,"0");
+}
+function noteText(n){
+  return [noteStamp(n.t) + "  " + n.head, "クライアント役：「" + n.u + "」", n.text].join("\n");
+}
+function fallbackCopy(text, done, msg){
+  try{
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select(); document.execCommand("copy");
+    document.body.removeChild(ta); done();
+  }catch(e){ if(msg) msg.textContent = "この端末ではコピーができませんでした。文字を長押しして選んでコピーしてください。"; }
+}
+function notesHTML(){
+  const ns = store.notes || [];
+  return `
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="stepbar"><span>言葉帳${ns.length ? `（${ns.length}）` : ""}</span><span class="sp"></span>
+      <button class="themebtn" data-go="home" type="button">← 戻る</button></div>
+
+    <p class="muted" style="margin:0">「これは使える」と思った<b style="color:var(--ink)">言い回しだけ</b>を残す場所です。回数の記録は「記録を見る」の方にあります。</p>
+
+    ${ns.length ? `
+      <div class="btnrow">
+        <button class="btn ghost sm" id="copynotes" type="button">まとめてコピー</button>
+        ${delAllAsk
+          ? `<button class="btn sm" id="clearyes" type="button">本当に全部消す</button>
+             <button class="btn ghost sm" id="clearno" type="button">やめる</button>`
+          : `<button class="btn ghost sm" id="clearnotes" type="button">全部消す</button>`}
+      </div>
+      <p class="note" id="copymsg" style="margin:0"></p>
+      ${ns.map((n,i) => `
+        <div class="card" style="display:flex;flex-direction:column;gap:8px">
+          <p class="eyebrow" style="margin:0">${esc(noteStamp(n.t))} ／ ${esc(n.head)}</p>
+          <p class="note" style="margin:0">クライアント役：「${esc(n.u)}」</p>
+          ${noteEditIx === i ? `
+            <textarea id="editnote">${esc(n.text)}</textarea>
+            <div class="btnrow">
+              <button class="btn" data-saveedit="${i}" type="button">保存</button>
+              <button class="btn ghost" id="canceledit" type="button">やめる</button>
+            </div>
+          ` : `
+            <div class="para">${esc(n.text).replace(/\n/g, "<br>")}</div>
+            <div class="btnrow">
+              <button class="btn ghost sm" data-editnote="${i}" type="button">直す</button>
+              ${delAskIx === i
+                ? `<button class="btn sm" data-delyes="${i}" type="button">本当に消す</button>
+                   <button class="btn ghost sm" id="delno" type="button">やめる</button>`
+                : `<button class="btn ghost sm" data-delnote="${i}" type="button">消す</button>`}
+            </div>
+          `}
+        </div>`).join("")}
+    ` : `<div class="card"><p class="empty" style="margin:0">まだ何も残っていません。ドリルの答え合わせに出てくる「この言い回しを言葉帳に残す」を押すと、自分が書いた文がそのまま編集欄に入ります。直してから保存してください。</p></div>`}
+
+    <div class="foot">
+      <p class="note" style="margin:0"><b>残るのはこの端末の中だけです。</b>外に送るものは何もありません。ブラウザのデータを消すと言葉帳も消えるので、大事なものは「まとめてコピー」でメモアプリなどに貼って残してください。</p>
+    </div>
+  </div>`;
+}
 /* ===================== 画面 ===================== */
 function render(){
+  const y = window.scrollY;
   if(view === "home") app.innerHTML = homeHTML();
   else if(view === "drill") app.innerHTML = mode === "meta" ? metaHTML() : mode === "stack" ? stackHTML() : singleHTML();
   else if(view === "metapick") app.innerHTML = metaPickHTML();
@@ -1879,8 +2055,10 @@ function render(){
   else if(view === "chapter") app.innerHTML = chapterHTML();
   else if(view === "reframe") app.innerHTML = rfHTML();
   else if(view === "goal") app.innerHTML = glHTML();
+  else if(view === "notes") app.innerHTML = notesHTML();
   wire();
-  window.scrollTo({top:0, behavior: view === "drill" ? "auto" : "auto"});
+  if(keepScroll){ keepScroll = false; window.scrollTo({top:y, behavior:"auto"}); }
+  else window.scrollTo({top:0, behavior:"auto"});
 }
 
 function homeHTML(){
@@ -1897,7 +2075,7 @@ function homeHTML(){
     <div class="modes">
       <button class="mode" data-go="textbook" type="button">
         <span class="mk">T</span><b>テキスト（読む）</b>
-        <span>NLPの考え方を、教科書の順番で読めます。いま読めるのは0章〜4章（NLPってなに？／NLPの前提／TOTEモデル／リフレーミング／よくまとめられたゴール）。</span>
+        <span>NLPの考え方を、教科書の順番で読めます。いま読めるのは0章〜5章（NLPってなに？／NLPの前提／TOTEモデル／リフレーミング／よくまとめられたゴール／ラポール）。</span>
       </button>
       <button class="mode" data-go="single" type="button">
         <span class="mk">A</span><b>単発ドリル</b>
@@ -1960,14 +2138,16 @@ function homeHTML(){
 
     <div class="btnrow">
       <button class="btn ghost" data-go="reference" type="button">パターン早見表</button>
-      <button class="btn ghost" data-go="stats" type="button">記録を見る${total ? `（${total}）` : ""}</button>
+      <button class="btn ghost" data-go="stats" type="button">記録を見る（回数）${total ? `（${total}）` : ""}</button>
+      <button class="btn ghost" data-go="notes" type="button">言葉帳${store.notes.length ? `（${store.notes.length}）` : ""}</button>
     </div>
 
     <div class="foot">
       <p class="note" style="margin:0">
         <b>記録はこの端末の中だけに保存されます。</b>
-        外部に送信するものは何もありません。サーバーには何も残りません。保存されるのはパターン名とふりかえりの結果だけで、
-        <b>あなたが書いた文章は保存されません。</b>
+        外部に送信するものは何もありません。サーバーには何も残りません。
+        <b>あなたが書いた文章は、「この言い回しを言葉帳に残す」を押したときだけ、この端末の中に保存されます。</b>
+        押さなければ残りません。言葉帳からいつでも直せますし、消せます。
       </p>
       <p class="note" style="margin:0">
         素材の発言はすべて架空のものです。実在の人物・事例は含まれていません。
@@ -2036,6 +2216,7 @@ function reviewHTML(models, point, p){
 
     <div>
       <p class="eyebrow" style="margin:0 0 9px">ふりかえり — 入っていたものをタップ</p>
+        <p class="note" style="margin:0 0 9px">次の問題へ進むと、練習が1回分積み上がります。</p>
       <div class="checks">
         ${p.checks.map((c,i) => `
           <button class="chk" type="button" data-chk="${i}" aria-pressed="${checked[i]}">
@@ -2050,9 +2231,11 @@ function reviewHTML(models, point, p){
     </div>
     ${fb.key === "start" ? `<p class="premise">うまくいかなかった結果も、次へのヒント（フィードバック）です。<span>— NLPの前提より</span></p>` : ""}
 
+    ${noteBtnHTML()}
+
     <div class="btnrow">
-      <button class="btn" id="nextq" type="button">記録して次へ</button>
-      <button class="btn ghost" data-go="home" type="button">終える</button>
+      <button class="btn" id="nextq" type="button">次の問題へ</button>
+      <button class="btn ghost" data-go="home" type="button">終了</button>
     </div>`;
 }
 
@@ -2099,6 +2282,7 @@ function stackHTML(){
 
       <div>
         <p class="eyebrow" style="margin:0 0 9px">ふりかえり — 入っていたものをタップ</p>
+        <p class="note" style="margin:0 0 9px">次の問題へ進むと、練習が1回分積み上がります。</p>
         <div class="checks">
           ${q.checks.map((c,i) => `
             <button class="chk" type="button" data-chk="${i}" aria-pressed="${checked[i]}">
@@ -2107,9 +2291,10 @@ function stackHTML(){
         </div>
       </div>
       ${stackVerdictHTML()}
+      ${noteBtnHTML()}
       <div class="btnrow">
-        <button class="btn" id="nextq" type="button">記録して次へ</button>
-        <button class="btn ghost" data-go="home" type="button">終える</button>
+        <button class="btn" id="nextq" type="button">次の問題へ</button>
+        <button class="btn ghost" data-go="home" type="button">終了</button>
       </div>
     ` : (shakyoOn ? "" : `<button class="btn" id="reveal" type="button">答え合わせ</button>${shakyoBtnHTML()}`)}
   </div>`;
@@ -2159,7 +2344,7 @@ function startMeta(monoId){
 }
 function nextSpot(){
   if(spotIx + 1 >= curMono.spots.length){ view = "metadone"; render(); return; }
-  spotIx++; picked = null;
+  spotIx++; picked = null; noteSaved = false; noteDraft = null; lastWrite = [];
   checked = [false,false,false]; revealed = false; hintOn = false; shakyoOn = false;
   render();
 }
@@ -2252,6 +2437,7 @@ function metaHTML(){
 
       <div>
         <p class="eyebrow" style="margin:0 0 9px">ふりかえり — 入っていたものをタップ</p>
+        <p class="note" style="margin:0 0 9px">次の問題へ進むと、練習が1回分積み上がります。</p>
         <div class="checks">
           ${correct.checks.map((c,i) => `
             <button class="chk" type="button" data-chk="${i}" aria-pressed="${checked[i]}">
@@ -2260,9 +2446,10 @@ function metaHTML(){
         </div>
       </div>
       ${metaVerdictHTML()}
+      ${noteBtnHTML()}
       <div class="btnrow">
         <button class="btn" id="nextspot" type="button">${spotIx + 1 >= curMono.spots.length ? "記録して仕上げへ" : "記録して次の一言へ"}</button>
-        <button class="btn ghost" data-go="home" type="button">終える</button>
+        <button class="btn ghost" data-go="home" type="button">終了</button>
       </div>
     ` : ""}
   </div>`;
@@ -2403,7 +2590,7 @@ const TEXTS = [
 <div class="kv"><span class="k">ひとことで</span><span class="v">自分が「こう言ったつもり」でも、相手がどう受け取ったかが本当の結果です。</span></div>
 <div class="kv"><span class="k">たとえば</span><span class="v">励まそうと「大丈夫だよ」と言ったのに、友達が悲しそうな顔をした。相手には「分かってもらえない」と伝わったのかもしれません。</span></div>
 <div class="kv"><span class="k">コーチングの場面で</span><span class="v">相手の反応が予想と違ったら、相手のせいにせず、自分の伝え方を変えてもう一度試します。</span></div>
-<div class="kv"><span class="k">つながり</span><span class="v">ラポール、キャリブレーション（準備中）</span></div>
+<div class="kv"><span class="k">つながり</span><span class="v"><button class="linkbtn" data-text="t5" type="button">5章「ラポール」を読む →</button>　キャリブレーション（準備中）</span></div>
 </div></details>
 <details class="ref pp"><summary><span class="no">03</span>感じていることは、五感の言葉で表せる</summary><div class="body">
 <div class="kv"><span class="k">むずかしく言うと</span><span class="v">人が区別できることは、すべて五感を通して表せる</span></div>
@@ -2630,7 +2817,65 @@ const TEXTS = [
 <div class="kv"><span class="k">問い 3</span><span class="v">そのために、今日できる最初の一歩は何ですか。</span></div>
 </div>
 
-<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>5つの条件と、質問の要点は教科書に沿っています。質問リストの全文は載せていません（要点だけをこのアプリの言葉に直しました）。例・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` }
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>5つの条件と、質問の要点は教科書に沿っています。質問リストの全文は載せていません（要点だけをこのアプリの言葉に直しました）。例・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` },
+  { id:"t5", no:"5", title:"ラポール", min:8, body:`<div class="hitokoto">ラポールとは、<b>信義・好意・理解のある雰囲気、心地よいつながり</b>のこと。「信頼関係」と訳されることも多いですが、もう少し広く、その場の空気そのものだと考えてください。</div>
+
+<h3>言葉の意味</h3>
+<p>ラポール（rapport）は、もとはフランス語で「関係」「つながり」「交流」を指す言葉です。</p>
+<p>そしてNLPでは、ここを<b>技術として扱います</b>。相性や人柄の問題にせず、観察して、合わせて、確かめる。だから練習で伸ばせます。</p>
+
+<h3>3つの言葉：マッチング → ペーシング → リーディング</h3>
+<div class="kvs">
+<div class="kv"><span class="k">マッチング</span><span class="v">自分の動きや話し方を、相手の同じ要素に近づけて<b>そろえる</b>こと。ラポールの基本です。</span></div>
+<div class="kv"><span class="k">ペーシング</span><span class="v">そろえ続けること。相手が動けば自分も動く。止まった一瞬ではなく、<b>ずっと合わせ続ける</b>のがペーシングです。</span></div>
+<div class="kv"><span class="k">リーディング</span><span class="v">合ったうえで、相手を望ましい方向へ<b>連れていく</b>こと。</span></div>
+</div>
+<div class="hitokoto">ラポールがとれていなければ、リーディングはできません。</div>
+<p>順番が逆になると、どんなに良い提案でも入りません。うまくいかないとき、多くは中身ではなく<b>この順番</b>の問題です。</p>
+
+<h3>何を合わせるのか（11の要素）</h3>
+<p>合わせる相手は「気持ち」ではなく、目と耳で確かめられるものです。</p>
+<div class="kvs">
+<div class="kv"><span class="k">1 全身</span><span class="v">相手の姿勢の変化に、自分の姿勢を近づける。</span></div>
+<div class="kv"><span class="k">2 体の一部</span><span class="v">瞬きなど、体の動きや癖に合わせる。</span></div>
+<div class="kv"><span class="k">3 半身</span><span class="v">相手の上半身、または下半身の一部に合わせる。</span></div>
+<div class="kv"><span class="k">4 頭と肩</span><span class="v">頭や肩の角度、そのときの姿勢に合わせる。</span></div>
+<div class="kv"><span class="k">5 声の質</span><span class="v">調子・テンポ・大きさ・声色・抑揚の変化に合わせる。</span></div>
+<div class="kv"><span class="k">6 言葉</span><span class="v">相手が使っている感覚の言葉に合わせる。<b>同じ言葉を使う</b>のが基本です。</span></div>
+<div class="kv"><span class="k">7 顔の表情</span><span class="v">唇をすぼめる、眉を上げるなど、相手の顔の使い方を観察して合わせる。</span></div>
+<div class="kv"><span class="k">8 ジェスチャー</span><span class="v"><b>敬意をもって、自然に</b>身振りに合わせる。真似だと気づかれる合わせ方はしません。</span></div>
+<div class="kv"><span class="k">9 くり返される言い回し</span><span class="v">相手が何度も使う言葉をそのまま返す（バックトラック）。</span></div>
+<div class="kv"><span class="k">10 呼吸</span><span class="v">相手の呼吸に、自分の呼吸を合わせる。いちばん深く効く要素です。</span></div>
+<div class="kv"><span class="k">11 間接的に合わせる</span><span class="v">別の形で合わせる方法（クロスオーバー・ミラーリング）。例：相手の呼吸に、自分の声のテンポを合わせる。相手の瞬きに、自分のうなずきを合わせる。</span></div>
+</div>
+
+<h3>合ったかどうかは、どう分かるか</h3>
+<p>確かめ方はシンプルです。<b>こちらが先に少しだけ変えてみて、相手がついてくるか</b>を見ます。呼吸を少し遅くしてみる。声を少し落としてみる。相手も一緒に変われば、ラポールは取れています。ついてこなければ、まだ合わせる時間が要る、ということです。</p>
+
+<h3>コーチングの場面で</h3>
+<ul>
+<li><b>ネガティブな話をしてもらうのはOK。</b>ただし、<b>こちらまで一緒に落ち込まない</b>。同調しすぎず、少し引いた位置から見ている状態を保ちます</li>
+<li><b>バックトラックは、要約より効く。</b>「つまり◯◯ということですね」とまとめ直すより、相手が使った言葉をそのまま返すほうが、伝わったと感じてもらえます</li>
+<li><b>合わせる → 確かめる → 連れていく。</b>提案が入らないときは、提案の中身を変える前に、合わせる時間を増やします</li>
+<li><b>2章のTOTEと同じ形</b>です。合わせて、確かめて、まだなら別の要素で合わせ直す<br><button class="linkbtn" data-text="t2" type="button">2章「TOTEモデル」を読む →</button></li>
+</ul>
+
+<h3>人と組んでやるワーク</h3>
+<p>ラポールは相手がいないと練習できません。2人1組でやる形が3つあります。</p>
+<ul>
+<li><b>呼吸を合わせる</b> … 一人は普段どおりに呼吸し、もう一人がその呼吸に合わせる。終わったら交代して、感想を伝え合う</li>
+<li><b>バックトラック</b> … 一人が1分間、楽しい出来事を話す。聞き役は<b>何も反応せずに</b>聞く（うなずきも相づちもなし）。そのあと同じ話をもう1分、今度は気になった言葉をそのまま返しながら聞く。話し手の感じ方の違いを確かめる</li>
+<li><b>リーディングに挑戦</b> … 呼吸を合わせ、合ってきたら、こちらが少しずつペースを変えてみる。相手がついてくるかを見る</li>
+</ul>
+
+<h3>ふり返ってみよう</h3>
+<div class="kvs">
+<div class="kv"><span class="k">問い 1</span><span class="v">最近「話しやすかった人」を思い出してください。その人は、あなたの何に合わせていたと思いますか。11の要素のどれですか。</span></div>
+<div class="kv"><span class="k">問い 2</span><span class="v">逆に「話しにくかった場面」では、どの要素がずれていましたか。</span></div>
+<div class="kv"><span class="k">問い 3</span><span class="v">次のセッションや会話で、1つだけ意識して合わせるとしたら、どれにしますか。</span></div>
+</div>
+
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>ラポールの意味、マッチング・ペーシング・リーディング、合わせる11の要素、ワークの流れは教科書に沿っています。言い方・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` }
 ];
 const TX = {}; TEXTS.forEach(t => TX[t.id] = t);
 
@@ -2749,8 +2994,11 @@ function statsHTML(){
     </div>` : ""}
 
     <div class="foot">
-      <p class="note" style="margin:0">この記録はこの端末のブラウザの中だけにあります。書いた文章は保存していません。</p>
-      <button class="btn ghost sm" id="reset" type="button" style="align-self:flex-start">記録をリセット</button>
+      <p class="note" style="margin:0">ここは<b>回数</b>の記録です。実際の言い回しは「言葉帳」の方に残ります。どちらもこの端末のブラウザの中だけにあります。</p>
+      ${delAllAsk
+        ? `<div class="btnrow"><button class="btn sm" id="resetyes" type="button">本当にリセットする</button>
+           <button class="btn ghost sm" id="resetno" type="button">やめる</button></div>`
+        : `<button class="btn ghost sm" id="reset" type="button" style="align-self:flex-start">記録をリセット</button>`}
     </div>
   </div>`;
 }
@@ -2761,6 +3009,7 @@ function wire(){
     el.addEventListener("click", () => {
       const g = el.dataset.go;
       stopTimer();
+      delAskIx = null; delAllAsk = false;
       if(g === "single"){ start("single", false); }
       else if(g === "reframe"){ startRf(); }
       else if(g === "goal"){ startGl(); }
@@ -2815,8 +3064,21 @@ function wire(){
     b.addEventListener("click", () => { store.fs = Number(b.dataset.f); save(); applyFontSize(); render(); });
   });
 
+  app.querySelectorAll("[data-gdone]").forEach(b => {
+    b.addEventListener("click", () => {
+      grabGl();
+      const id = b.dataset.gdone;
+      glDone[id] = !glDone[id];
+      keepScroll = true; render();
+    });
+  });
+
   const gl2 = document.getElementById("glreveal");
-  if(gl2) gl2.addEventListener("click", () => { stopTimer(); glStep = 2; render(); });
+  if(gl2) gl2.addEventListener("click", () => {
+    stopTimer(); grabGl();
+    lastWrite = GOAL_COND.map(c => glDone[c.id] ? "（もう入っている）" : (glAns[c.id] || "").trim());
+    noteSaved = false; noteDraft = null; glStep = 2; render();
+  });
 
   const gl3 = document.getElementById("glnextq");
   if(gl3) gl3.addEventListener("click", () => {
@@ -2824,11 +3086,76 @@ function wire(){
     startGl();
   });
 
+  app.querySelectorAll("[data-useex]").forEach(b => {
+    b.addEventListener("click", () => {
+      const d = noteData(); if(!d) return;
+      const ta = document.getElementById("notedraft");
+      const now = ta ? ta.value : (noteDraft || "");
+      const add = d.models[Number(b.dataset.useex)];
+      noteDraft = (now.trim() ? now.replace(/\s+$/, "") + "\n" : "") + add;
+      keepScroll = true;
+      render();
+    });
+  });
+
+  const sn = document.getElementById("savenote");
+  if(sn) sn.addEventListener("click", () => {
+    const ta = document.getElementById("notedraft");
+    keepScroll = true;
+    saveNote(ta ? ta.value : "");
+  });
+
+  app.querySelectorAll("[data-editnote]").forEach(b => {
+    b.addEventListener("click", () => { noteEditIx = Number(b.dataset.editnote); keepScroll = true; render(); });
+  });
+  const ce = document.getElementById("canceledit");
+  if(ce) ce.addEventListener("click", () => { noteEditIx = null; keepScroll = true; render(); });
+  app.querySelectorAll("[data-saveedit]").forEach(b => {
+    b.addEventListener("click", () => {
+      const ta = document.getElementById("editnote");
+      const i = Number(b.dataset.saveedit);
+      const v = ta ? ta.value.trim() : "";
+      if(v) store.notes[i].text = v;
+      noteEditIx = null; keepScroll = true; save(); render();
+    });
+  });
+
+  app.querySelectorAll("[data-delnote]").forEach(b => {
+    b.addEventListener("click", () => { delAskIx = Number(b.dataset.delnote); keepScroll = true; render(); });
+  });
+  app.querySelectorAll("[data-delyes]").forEach(b => {
+    b.addEventListener("click", () => {
+      store.notes.splice(Number(b.dataset.delyes), 1);
+      delAskIx = null; noteEditIx = null; keepScroll = true; save(); render();
+    });
+  });
+  const dn = document.getElementById("delno");
+  if(dn) dn.addEventListener("click", () => { delAskIx = null; keepScroll = true; render(); });
+
+  const cn = document.getElementById("copynotes");
+  if(cn) cn.addEventListener("click", () => {
+    const text = store.notes.map(noteText).join("\n\n----------\n\n");
+    const msg = document.getElementById("copymsg");
+    const done = () => { if(msg) msg.textContent = "コピーしました。メモアプリなどに貼り付けてください。"; };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done, msg));
+    } else { fallbackCopy(text, done, msg); }
+  });
+
+  const cln = document.getElementById("clearnotes");
+  if(cln) cln.addEventListener("click", () => { delAllAsk = true; keepScroll = true; render(); });
+  const cly = document.getElementById("clearyes");
+  if(cly) cly.addEventListener("click", () => {
+    store.notes = []; noteEditIx = null; delAllAsk = false; delAskIx = null; save(); render();
+  });
+  const cln2 = document.getElementById("clearno");
+  if(cln2) cln2.addEventListener("click", () => { delAllAsk = false; keepScroll = true; render(); });
+
   const rf1 = document.getElementById("rfnext");
-  if(rf1) rf1.addEventListener("click", () => { stopTimer(); rfStep = 2; render(); startTimer(); });
+  if(rf1) rf1.addEventListener("click", () => { stopTimer(); grabWrite(["rfans"]); rfStep = 2; render(); startTimer(); });
 
   const rf2 = document.getElementById("rfreveal");
-  if(rf2) rf2.addEventListener("click", () => { stopTimer(); rfStep = 3; render(); });
+  if(rf2) rf2.addEventListener("click", () => { stopTimer(); const first = lastWrite[0] || ""; grabWrite(["rfans"]); lastWrite = [first, lastWrite[0] || ""]; noteSaved = false; rfStep = 3; render(); });
 
   const rf3 = document.getElementById("rfnextq");
   if(rf3) rf3.addEventListener("click", () => {
@@ -2838,7 +3165,7 @@ function wire(){
   });
 
   const rv = document.getElementById("reveal");
-  if(rv) rv.addEventListener("click", () => { stopTimer(); revealed = true; render(); });
+  if(rv) rv.addEventListener("click", () => { stopTimer(); grabWrite(["ans"]); noteSaved = false; revealed = true; render(); });
 
   const tb = document.getElementById("termbtn");
   if(tb) tb.addEventListener("click", () => { termOn = true; render(); });
@@ -2869,11 +3196,11 @@ function wire(){
   });
 
   const rs = document.getElementById("reset");
-  if(rs) rs.addEventListener("click", () => {
-    if(confirm("この端末に保存されている練習の記録を、すべて消します。よろしいですか？")){
-      store.records = []; save(); render();
-    }
-  });
+  if(rs) rs.addEventListener("click", () => { delAllAsk = true; keepScroll = true; render(); });
+  const rsy = document.getElementById("resetyes");
+  if(rsy) rsy.addEventListener("click", () => { store.records = []; delAllAsk = false; save(); render(); });
+  const rsn = document.getElementById("resetno");
+  if(rsn) rsn.addEventListener("click", () => { delAllAsk = false; keepScroll = true; render(); });
 }
 
 /* 表示テーマ（ライト / ダーク / 端末に合わせる） */
