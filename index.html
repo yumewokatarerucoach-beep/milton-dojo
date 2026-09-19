@@ -1478,7 +1478,125 @@ const GOALS = [
      "会社にいることで、今得ているものは何ですか？",
      "独立したとき、家族の収入や生活はどうなりますか？"],
     "来年の秋までに、平日2日を自分の仕事にあてて月15万円を売り上げる。",
-    "大きな言葉ほど、五感とまわりへの影響の両方を確かめる。")
+    "大きな言葉ほど、五感とまわりへの影響の両方を確かめる。"),
+  /* --- ワクワクしている「こうなりたい」 --- */
+  G("来年、海外で働いてみたいんです！",
+    ["海外で働いているとき、どんな毎日を過ごしていたいですか？",
+     "そのために、いまの自分が始められることは何ですか？",
+     "向こうで働いている朝、何が見えて、何が聞こえて、体はどんな感じですか？",
+     "いまの暮らしの中で、向こうに行っても手放したくないものは何ですか？",
+     "その挑戦は、家族や今の職場にどんな影響がありますか？"],
+    "来年の春までに、英語の面接を1社受けて、1年目は日本人の多い職場から始める。",
+    "もう肯定の形で言えている。ワクワクを消さずに、五感と足もとの一歩で具体的にする。"),
+  G("子どもともっと楽しく過ごしたいです。",
+    ["楽しく過ごせているとき、二人はどんなことをしていますか？",
+     "そのために、あなたから始められることは何ですか？",
+     "楽しい時間が流れているとき、どんな笑い声が聞こえていますか？",
+     "いまの過ごし方で、大事にできていることは何ですか？",
+     "その時間を作ると、仕事やパートナーとの予定はどう変わりますか？"],
+    "毎週土曜の朝、30分だけスマホを置いて、子どもと公園でキャッチボールをする。",
+    "「楽しく」は名詞化に近い言葉。どんな場面か、何が聞こえるかまで下ろすと、今週からできる形になる。"),
+  G("自分の講座を開いて、人の役に立ちたいです。",
+    ["講座が開けたとき、どんな人たちが、どんな顔をして帰っていきますか？",
+     "そのために、あなたが今月できることは何ですか？",
+     "講座の日、会場ではどんな声が聞こえて、あなたはどんな気持ちで立っていますか？",
+     "いまの働き方で、講座を開いたあとも残したいものは何ですか？",
+     "講座を始めると、家族との時間や今の仕事にはどんな影響がありますか？"],
+    "半年後に、知り合い5人を集めて、2時間の体験講座を一度開く。",
+    "「役に立ちたい」は大きな言葉。誰が、どう変わって帰るのかまで具体にする。")
+];
+
+/* ===================== 感覚の言葉（7章のドリル） ===================== */
+/* 発言から優先している感覚を聞き分け、同じ感覚の言葉で返し、別の感覚へ広げる。発言はすべて架空。 */
+const VK_SENSE = [
+  { id:"V", name:"見る（V）",     word:"見える・描く・明るい・ぼやける など" },
+  { id:"A", name:"聞く（A）",     word:"聞こえる・響く・言う・声 など" },
+  { id:"K", name:"感じる（K）",   word:"感じる・重い・つかむ・しっくり など" }
+];
+const VS = {}; VK_SENSE.forEach(v => VS[v.id] = v);
+const VK_SKILLS = [{ id:"vkp", name:"感覚を聞き分ける" }, { id:"vkr", name:"同じ感覚で返す" }];
+const VK_CHECKS = [
+  "相手と同じ感覚の言葉で返せたか",
+  "相手が使った手がかりの言葉を、そのまま使えたか",
+  "別の感覚へ、無理なく広げられたか（書いた場合）"
+];
+const V_ = (sense,u,cues,back,over,point) => ({sense,u,cues,back,over,point});
+const VAKS = [
+  /* --- 見る --- */
+  V_("V","最近、なんだか先が見えなくて、全部ぼやけてるんです。", ["先が見えなくて","ぼやけて"],
+    ["先が見えない。いま、どんな景色が見えていますか？","ぼやけている中で、少しでもはっきり見える部分はありますか？"],
+    "その少しはっきりした部分を見ていると、どんな音が聞こえてきますか？",
+    "「見えない」と言う人には、見る言葉のまま聞くと答えやすい。"),
+  V_("V","自分の将来像が、まったく描けないんです。", ["将来像","描けない"],
+    ["まだ白いキャンバスなんですね。最初に一本だけ線を引くなら、どこに引きますか？","描けるとしたら、どんな色から塗りますか？"],
+    "その色の中に立っているとしたら、体はどんな感じがしますか？",
+    "「描く」と言った人には、絵の言葉で付き合う。"),
+  V_("V","あの人の前に立つと、頭が真っ白になるんです。", ["真っ白"],
+    ["真っ白になる。その白さは、画面いっぱいに広がっていますか？","そのとき、あの人はどんなふうに見えていますか？"],
+    "その白い画面の端に、少しだけ色が戻ってくると、呼吸はどう変わりますか？",
+    "「真っ白」は視覚の言葉。画面の大きさや明るさを聞くと、扱える形になる。"),
+  V_("V","会議の資料を見た瞬間、パッと全体像が浮かんだんですよ。", ["見た瞬間","パッと","全体像","浮かんだ"],
+    ["パッと全体像が見えたんですね。そこには何が映っていましたか？","その全体像の中で、いちばん目立って見えるのはどこですか？"],
+    "その全体像を誰かに説明するとしたら、最初に何と言いますか？",
+    "うまくいった体験も、同じ感覚の言葉で聞くと細部が出てくる。"),
+  V_("V","目標がはっきり見えていれば、頑張れるんですけどね。", ["はっきり見えて"],
+    ["はっきり見えている目標って、どんな姿をしていますか？","いまは、どのくらいの距離に見えていますか？"],
+    "その目標に近づいていくと、まわりからどんな声が聞こえてきそうですか？",
+    "「見えていれば」は条件の形。まず見える形にするのが先。"),
+  V_("V","子どもの将来を考えると、明るい未来が想像できなくて。", ["明るい","想像できなくて"],
+    ["明るい未来が想像できない。いま浮かぶのは、どんな明るさの景色ですか？","少しだけ明るくするとしたら、どこに光を当てますか？"],
+    "その光の中にいるお子さんは、どんなことを話していますか？",
+    "「明るい／暗い」は視覚の言葉。明るさを調整する聞き方ができる。"),
+  /* --- 聞く --- */
+  V_("A","上司に言われた一言が、ずっと頭の中で鳴り続けてるんです。", ["言われた","鳴り続けて"],
+    ["その一言は、いまどんな声で響いていますか？","その声の大きさを、少し下げられるとしたら？"],
+    "声が小さくなったとき、目の前にはどんな景色が見えてきますか？",
+    "「鳴り続ける」人には、音量・声色・距離で聞く。"),
+  V_("A","周りの声ばかり気になって、自分の本音が聞こえないんです。", ["声","聞こえない"],
+    ["周りの声が大きいんですね。自分の本音は、どのあたりから小さく聞こえていますか？","周りの声が静かになったら、本音は何と言っていそうですか？"],
+    "その本音の声が聞こえたとき、体のどこがほっとしますか？",
+    "相手の比喩（声・聞こえる）の中で、音の大きさを動かす。"),
+  V_("A","頭の中で「お前には無理だ」って言う声がするんです。", ["言う声"],
+    ["その声は、誰の声に似ていますか？","その声に、あなたは何と言い返したいですか？"],
+    "言い返したあと、その声はどこへ行きますか？ そのとき胸のあたりはどうなっていますか？",
+    "内側の声には、声として扱う。消そうとせず、話しかける。"),
+  V_("A","母の「ちゃんとしなさい」という言葉が、今も耳に残っているんです。", ["言葉","耳に残って"],
+    ["耳に残っているその言葉、いまはどんな声で聞こえていますか？","その声が少し遠くなったら、代わりに何が聞こえてきそうですか？"],
+    "その声が遠くなったとき、目の前にはどんな景色が見えてきますか？",
+    "「耳に残る」人には、声の大きさや距離を聞くと、自分で調整し始める。"),
+  V_("A","家に帰っても、お客様に言われた「もう結構です」の一言が、耳から離れなくて。", ["言われた","一言","耳から離れなくて"],
+    ["その一言、いまはどんな声の調子で聞こえていますか？","その声を少し遠くに置けるとしたら、どのくらい離れると楽になりますか？"],
+    "その声が遠くなったとき、お客様の表情はどんなふうに見えてきますか？",
+    "言われた一言が残っている人には、中身を議論せず、声の調子・大きさ・距離を聞く。"),
+  V_("A","試合の前に好きな曲を聴くと、頭の中でリズムが鳴って、「よし、行こう」って声が聞こえてくるんです。", ["好きな曲を聴く","リズムが鳴って","声が聞こえて"],
+    ["いい曲なんですね。いまも頭の中で鳴らせますか？ どのくらいの音量ですか？","「よし、行こう」の声は、どんな声の調子で聞こえてきますか？"],
+    "その曲が鳴っているとき、体のどこに力が入ってきますか？",
+    "うまくいっている状態も、同じ感覚で細かく聞いておくと、必要なときに自分で取り出せるようになる。"),
+  /* --- 感じる --- */
+  V_("K","毎朝、体が鉛みたいに重いんです。", ["鉛みたいに重い"],
+    ["鉛みたいに重い。その重さは、体のどこにいちばんありますか？","その重さが少し軽くなったら、体はどう感じますか？"],
+    "少し軽くなった朝、窓の外にはどんな景色が見えていますか？",
+    "「重い」は身体感覚の言葉。場所・大きさ・温度で聞くと扱える。"),
+  V_("K","胸のあたりが、ずっとモヤモヤしてるんです。", ["胸のあたり","モヤモヤ"],
+    ["胸のあたりのモヤモヤ、どのくらいの大きさですか？","そのモヤモヤが少しほどけたら、どんな感じになりますか？"],
+    "ほどけたとき、自分に何と声をかけてあげたいですか？",
+    "身体感覚には、急がず、ゆっくりした速さで返す。"),
+  V_("K","今の仕事、どうもしっくりこないんですよね。", ["しっくりこない"],
+    ["しっくりこない感じ、どこにひっかかりがありますか？","しっくりくるとしたら、どんな手ざわりですか？"],
+    "しっくりきている自分は、どんな表情をしていますか？",
+    "「しっくり」は身体感覚。合う／合わないを手ざわりで聞く。"),
+  V_("K","プレッシャーに押しつぶされそうです。", ["押しつぶされそう"],
+    ["押しつぶされそうなくらい、圧がかかっているんですね。どこに一番かかっていますか？","その圧が少し軽くなったら、体はどう動けそうですか？"],
+    "少し動けるようになったら、最初に何が見えてきますか？",
+    "「押しつぶされる」は圧力の言葉。圧のかかり方から聞く。"),
+  V_("K","新しい職場、居心地がよくて、肩の力が抜けたんです。", ["居心地","肩の力が抜けた"],
+    ["肩の力が抜けたんですね。いま、体はどんな感じですか？","その居心地のよさは、どこから感じますか？"],
+    "その感じを覚えておくために、自分に何と言ってあげますか？",
+    "うまくいった体験も、感じた場所を聞くと、あとで取り出しやすくなる。"),
+  V_("K","どこから手をつけたらいいか、つかめないんです。", ["手をつけ","つかめない"],
+    ["まだつかめない感じなんですね。いちばん手に取りやすそうなのは、どれですか？","ひとつだけ触ってみるとしたら、どこから触りますか？"],
+    "それを手に取ったとき、目の前にはどんな順番が見えてきますか？",
+    "「つかむ・手をつける」は手の言葉。手に取れるサイズまで小さくする。")
 ];
 
 const KEY = "milton-drill-v1";
@@ -1894,6 +2012,127 @@ function glHTML(){
     `}
   </div>`;
 }
+/* ---- 感覚の言葉ドリルの出題と画面 ---- */
+let curVk = null;
+let vkStep = 1;          // 1 聞き分ける / 2 返す / 3 答え合わせ
+let vkPick = null;       // 選んだ感覚
+let vkRecent = [];
+
+function pickVk(){
+  const pool = VAKS.filter((_,i) => !vkRecent.includes(i));
+  const list = pool.length ? pool : VAKS;
+  const d = list[Math.floor(Math.random() * list.length)];
+  vkRecent.push(VAKS.indexOf(d));
+  if(vkRecent.length > 6) vkRecent.shift();
+  return d;
+}
+function startVk(){
+  mode = "vak";
+  noteSaved = false; noteDraft = null; lastWrite = [];
+  curVk = pickVk();
+  vkStep = 1; vkPick = null;
+  checked = [false,false,false];
+  expired = false;
+  view = "vak";
+  render();
+}
+/* 手がかりの言葉に色をつける */
+function vkMarked(d){
+  let h = esc(d.u);
+  d.cues.forEach(c => { h = h.split(esc(c)).join(`<mark style="background:var(--accent-soft);color:var(--ink);padding:0 2px;border-radius:3px">${esc(c)}</mark>`); });
+  return h;
+}
+function vkHTML(){
+  const d = curVk;
+  const n = checked.filter(Boolean).length;
+  const fb = feedbackOf(n);
+  const ok = vkPick === d.sense;
+  return `
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="stepbar">
+      <span>感覚の言葉</span>
+      <span class="dot on"></span>
+      <span class="dot ${vkStep >= 2 ? "on" : ""}"></span>
+      <span class="dot ${vkStep >= 3 ? "on" : ""}"></span>
+      <span class="sp"></span><button class="themebtn" data-go="home" type="button">← 戻る</button>
+    </div>
+
+    <div class="utter"><div class="who">クライアント役</div><p>「${vkStep >= 3 ? vkMarked(d) : esc(d.u)}」</p></div>
+
+    ${vkStep === 1 ? `
+      <div class="task">
+        <span class="lbl">お題 / 聞き分ける</span>
+        <h2>いま、どの感覚で話している？</h2>
+        <div class="form">発言の中の言葉から、相手が使っている感覚を選んでください。</div>
+      </div>
+      <div class="checks">
+        ${VK_SENSE.map(v => `
+          <button class="chk" type="button" data-vk="${v.id}" aria-pressed="${vkPick === v.id}">
+            <span class="box">✓</span><span><b>${esc(v.name)}</b><br><span style="color:var(--ink-3);font-size:.9em">${esc(v.word)}</span></span>
+          </button>`).join("")}
+      </div>
+      <button class="btn" id="vknext" type="button">次へ — 同じ感覚で返す</button>
+    ` : vkStep === 2 ? `
+      <div class="task">
+        <span class="lbl">お題 / 返す</span>
+        <h2>${vkPick ? esc(VS[vkPick].name) + "の言葉で返す" : "同じ感覚の言葉で返す"}</h2>
+        <div class="form">相手と同じ感覚の言葉を使って、ひとこと返してください。相手が使った言葉をそのまま拾うと、合わせやすくなります。</div>
+      </div>
+      <div class="speak"><span class="n">1</span>まず声に出して言う</div>
+      ${timerHTML()}
+      <div class="speak"><span class="n">2</span>それから書く</div>
+      <textarea id="vkans1" placeholder="同じ感覚で返す"></textarea>
+      <div class="task" style="padding-bottom:10px">
+        <span class="lbl">任意</span>
+        <h2 style="font-size:1.02rem">別の感覚へ広げる（オーバーラップ）</h2>
+        <div class="form" style="color:var(--ink-3)">返した感覚から、別の感覚へ移る一文。書かずに進んでもかまいません。</div>
+        <textarea id="vkans2" placeholder="別の感覚へ広げる一文"></textarea>
+      </div>
+      <button class="btn" id="vkreveal" type="button">答え合わせ</button>
+    ` : `
+      <hr class="hr">
+      <div class="model">
+        <h3>使っていた感覚：${esc(VS[d.sense].name)}</h3>
+        <ul><li>手がかりの言葉：${d.cues.map(c => "「" + esc(c) + "」").join("、")}</li></ul>
+        <div class="point"><b>あなたの選択：</b>${vkPick ? esc(VS[vkPick].name) : "選択なし"}　${ok ? "— 合っています。" : "— 手がかりの言葉を、もう一度見てみてください。"}</div>
+      </div>
+      <div class="model">
+        <h3>同じ感覚で返す例</h3>
+        <ul>${d.back.map(m => `<li>${esc(m)}</li>`).join("")}</ul>
+      </div>
+      <div class="model">
+        <h3>別の感覚へ広げる例</h3>
+        <ul><li>${esc(d.over)}</li></ul>
+        <div class="point"><b>ポイント：</b>${esc(d.point)}</div>
+      </div>
+
+      ${noteBtnHTML()}
+
+      <div>
+        <p class="eyebrow" style="margin:0 0 9px">ふりかえり — 入っていたものをタップ</p>
+        <p class="note" style="margin:0 0 9px">次の問題へ進むと、練習が1回分積み上がります。</p>
+        <div class="checks">
+          ${VK_CHECKS.map((c,i) => `
+            <button class="chk" type="button" data-chk="${i}" aria-pressed="${checked[i]}">
+              <span class="box">✓</span><span>${esc(c)}</span>
+            </button>`).join("")}
+        </div>
+      </div>
+
+      <div class="verdict">
+        <span class="g ${fb.cls}">${fb.glyph}</span>
+        <span class="t"><b>${fb.label}</b>${fb.desc}</span>
+      </div>
+      ${fb.key === "start" ? `<p class="premise">うまくいかなかった結果も、次へのヒント（フィードバック）です。<span>— NLPの前提より</span></p>` : ""}
+
+      <div class="btnrow">
+        <button class="btn" id="vknextq" type="button">次の問題へ</button>
+        <button class="btn ghost" data-go="home" type="button">終了</button>
+      </div>
+    `}
+  </div>`;
+}
+
 /* ===================== 言葉帳（自分の言い回しを残す） ===================== */
 /* 「言葉帳に残す」を押して、直してから保存する。この端末の中だけ。外には一切送らない。 */
 const MAX_NOTES = 200;
@@ -1919,6 +2158,10 @@ function noteData(){
     return { head:"リフレーミング（" + curRf.kind + "）", u:curRf.u, labels:["意味","状況"],
       models:curRf.meaning.map(m => "意味：" + m).concat(curRf.situation.map(m => "状況：" + m)),
       point:curRf.point };
+  }
+  if(mode === "vak" && curVk){
+    return { head:"感覚の言葉（" + VS[curVk.sense].name + "）", u:curVk.u, labels:["同じ感覚で返す","別の感覚へ"],
+      models:curVk.back.concat([curVk.over]), point:curVk.point };
   }
   if(mode === "goal" && curGl){
     return { head:"ゴールを整える", u:curGl.u, labels:GOAL_COND.map(c => c.no + ". " + c.name),
@@ -2055,6 +2298,7 @@ function render(){
   else if(view === "chapter") app.innerHTML = chapterHTML();
   else if(view === "reframe") app.innerHTML = rfHTML();
   else if(view === "goal") app.innerHTML = glHTML();
+  else if(view === "vak") app.innerHTML = vkHTML();
   else if(view === "notes") app.innerHTML = notesHTML();
   wire();
   if(keepScroll){ keepScroll = false; window.scrollTo({top:y, behavior:"auto"}); }
@@ -2075,7 +2319,7 @@ function homeHTML(){
     <div class="modes">
       <button class="mode" data-go="textbook" type="button">
         <span class="mk">T</span><b>テキスト（読む）</b>
-        <span>NLPの考え方を、教科書の順番で読めます。いま読めるのは0章〜5章（NLPってなに？／NLPの前提／TOTEモデル／リフレーミング／よくまとめられたゴール／ラポール）。</span>
+        <span>NLPの考え方を、教科書の順番で読めます。いま読めるのは0章〜7章（NLPってなに？／前提／TOTE／リフレーミング／ゴール／ラポール／キャリブレーション／表象システム）。</span>
       </button>
       <button class="mode" data-go="single" type="button">
         <span class="mk">A</span><b>単発ドリル</b>
@@ -2092,6 +2336,10 @@ function homeHTML(){
       <button class="mode" data-go="goal" type="button">
         <span class="mk">G</span><b>ゴールを整える</b>
         <span>クライアントの「こうなりたい」を、5つの条件がそろうように質問で整える練習。${GOALS.length}問。4章とセットです。</span>
+      </button>
+      <button class="mode" data-go="vak" type="button">
+        <span class="mk">V</span><b>感覚の言葉</b>
+        <span>相手の言葉から「見る・聞く・感じる」を聞き分けて、同じ感覚の言葉で返す練習。${VAKS.length}問。7章とセットです。</span>
       </button>
       <button class="mode" data-go="metapick" type="button">
         <span class="mk">M</span><b>メタモデル（長文ワーク）</b>
@@ -2590,14 +2838,14 @@ const TEXTS = [
 <div class="kv"><span class="k">ひとことで</span><span class="v">自分が「こう言ったつもり」でも、相手がどう受け取ったかが本当の結果です。</span></div>
 <div class="kv"><span class="k">たとえば</span><span class="v">励まそうと「大丈夫だよ」と言ったのに、友達が悲しそうな顔をした。相手には「分かってもらえない」と伝わったのかもしれません。</span></div>
 <div class="kv"><span class="k">コーチングの場面で</span><span class="v">相手の反応が予想と違ったら、相手のせいにせず、自分の伝え方を変えてもう一度試します。</span></div>
-<div class="kv"><span class="k">つながり</span><span class="v"><button class="linkbtn" data-text="t5" type="button">5章「ラポール」を読む →</button>　キャリブレーション（準備中）</span></div>
+<div class="kv"><span class="k">つながり</span><span class="v"><button class="linkbtn" data-text="t5" type="button">5章「ラポール」を読む →</button><br><button class="linkbtn" data-text="t6" type="button">6章「キャリブレーション」を読む →</button></span></div>
 </div></details>
 <details class="ref pp"><summary><span class="no">03</span>感じていることは、五感の言葉で表せる</summary><div class="body">
 <div class="kv"><span class="k">むずかしく言うと</span><span class="v">人が区別できることは、すべて五感を通して表せる</span></div>
 <div class="kv"><span class="k">ひとことで</span><span class="v">私たちが感じていることは、「見える」「聞こえる」「体で感じる」「匂い」「味」のどれかで言い表せます。</span></div>
 <div class="kv"><span class="k">たとえば</span><span class="v">「何となく不安」も、よく聞いてみると「胸のあたりが重い」「失敗する場面が頭に浮かぶ」のように、五感の言葉で言えるようになります。</span></div>
 <div class="kv"><span class="k">コーチングの場面で</span><span class="v">ぼんやりした悩みを、「何が見える？」「何が聞こえる？」「体のどこで感じる？」と聞いて、はっきりさせていきます。</span></div>
-<div class="kv"><span class="k">つながり</span><span class="v">表象システム、サブモダリティ（準備中）</span></div>
+<div class="kv"><span class="k">つながり</span><span class="v"><button class="linkbtn" data-text="t7" type="button">7章「表象システム」を読む →</button>　サブモダリティ（準備中）</span></div>
 </div></details>
 <details class="ref pp"><summary><span class="no">04</span>変わるための力は、もう自分の中にある</summary><div class="body">
 <div class="kv"><span class="k">むずかしく言うと</span><span class="v">人が変化を起こすために必要なリソースは、すでにその人の中にある</span></div>
@@ -2875,7 +3123,130 @@ const TEXTS = [
 <div class="kv"><span class="k">問い 3</span><span class="v">次のセッションや会話で、1つだけ意識して合わせるとしたら、どれにしますか。</span></div>
 </div>
 
-<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>ラポールの意味、マッチング・ペーシング・リーディング、合わせる11の要素、ワークの流れは教科書に沿っています。言い方・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` }
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>ラポールの意味、マッチング・ペーシング・リーディング、合わせる11の要素、ワークの流れは教科書に沿っています。言い方・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` },
+  { id:"t6", no:"6", title:"キャリブレーション", min:7, body:`<div class="hitokoto">キャリブレーションとは、NLPでいう<b>観察</b>のこと。相手の状態そのものより、<b>状態が変わった瞬間の「違い」を測る</b>ことを指します。</div>
+
+<h3>「読む」のではなく「測る」</h3>
+<p>Calibrate（キャリブレート）は、もともと測る・目盛りを合わせるという意味の言葉です。観察の対象は、自分・相手、そして<b>その内側と外側のすべて</b>。</p>
+<p>見るのは、次のようなものです。</p>
+<div class="kvs">
+<div class="kv"><span class="k">表情</span><span class="v">眉、口もと、まばたきの回数、顔色。</span></div>
+<div class="kv"><span class="k">態度・姿勢</span><span class="v">肩の力、体の向き、座り方の変化。</span></div>
+<div class="kv"><span class="k">声のトーン</span><span class="v">高さ、速さ、間の取り方。</span></div>
+<div class="kv"><span class="k">声の大きさ</span><span class="v">同じ話題でも、急に小さくなる瞬間があります。</span></div>
+</div>
+
+<h3>大事なのは「その人の中の差」</h3>
+<p>腕を組んだ＝拒否、目をそらした＝嘘。こういう決まった読み方は使いません。<b>腕の組み方に意味があるのではなく、さっきまで組んでいなかった人が組んだ、という変化に意味がある</b>からです。</p>
+<p>だから順番はこうなります。</p>
+<div class="kvs">
+<div class="kv"><span class="k">1</span><span class="v">まず、ふだんの状態を見ておく（基準をとる）。</span></div>
+<div class="kv"><span class="k">2</span><span class="v">話題が動いたときの変化を見る。</span></div>
+<div class="kv"><span class="k">3</span><span class="v">同じ変化がくり返し出るかを確かめる。</span></div>
+</div>
+<p>意味を当てにいかなくてかまいません。「いま、何かが変わった」と気づければ、そこを聞けばいいからです。</p>
+
+<h3>決めつけない</h3>
+<p>観察は、当てっこではありません。視線の動きを読むときの原則は、<b>一部だけを見て決めつけず、総合的に観察しながら、反応の違いに意識を向けること</b>。キャリブレーションも同じです。</p>
+<p>自分の読みが当たっているかどうかは、相手に聞けば分かります。「いま、少し止まりましたね。何が浮かびましたか？」と。</p>
+
+<h3>コーチングの場面で</h3>
+<ul>
+<li><b>言葉より先に、変化が出る。</b>「大丈夫です」と言いながら声が小さくなったら、そこが入り口です</li>
+<li><b>変化に気づいたら、決めつけずに聞く。</b>「何か浮かびましたか？」で十分です</li>
+<li><b>5章のラポールとセット。</b>合わせるためには、まず相手の今が見えていないといけません<br><button class="linkbtn" data-text="t5" type="button">5章「ラポール」を読む →</button></li>
+<li><b>ミルトンモデルのマインド・リーディングとの違い</b>に注意。相手の中身を当てにいくと事故ります。観察するのは<b>状態の変化</b>で、中身は本人に語ってもらいます</li>
+</ul>
+
+<h3>人と組んでやるワーク</h3>
+<p>観察は相手がいないと練習できません。練習の形は3つ、どれも「違いを当てる」やり方です。</p>
+<ul>
+<li><b>変化を捉える①</b>（3人以上）… 一人が前に立ってポーズを決める。他の人がよく見てから目を閉じる。その間に1〜2か所ポーズを変え、どこが変わったかを当てる</li>
+<li><b>変化を捉える②</b>（2人）… 相手に「好きな人」「苦手な人」を順に思い浮かべてもらう。そのあと、どちらかを思い浮かべてもらい、どちらかを当てる</li>
+<li><b>変化を捉える③</b>（2人）… 相手が「良かったこと」「悪かったこと」の短い話を5つ用意し、無言で順に思い出す。こちらは観察して、＋か−かを書き留め、最後に答え合わせ</li>
+</ul>
+<p>どれも交代して、最後に感想を伝え合います。</p>
+
+<h3>ふり返ってみよう</h3>
+<div class="kvs">
+<div class="kv"><span class="k">問い 1</span><span class="v">身近な一人を思い浮かべてください。その人の「機嫌がいいとき」と「疲れているとき」の違いは、どこに出ますか。</span></div>
+<div class="kv"><span class="k">問い 2</span><span class="v">最近の会話で「何かが変わった」と感じた瞬間はありましたか。何を見て、そう思いましたか。</span></div>
+<div class="kv"><span class="k">問い 3</span><span class="v">次の会話で、観察する要素を1つだけ決めるとしたら、どれにしますか（表情／姿勢／声のトーン／声の大きさ）。</span></div>
+</div>
+
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>キャリブレーションの定義（観察・測る／対象は自己と他者の内外すべて）、観察する要素（表情・態度・声のトーン・大きさ）、ワーク3つの流れは教科書に沿っています。「決めつけない」は視線解析の項の記述です。言い方・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` },
+  { id:"t7", no:"7", title:"表象システム", min:10, body:`<div class="hitokoto">人は、見る・聞く・感じる・嗅ぐ・味わうの<b>五感</b>で世界を受け取り、その感覚のまま頭の中にしまっています。この仕組みを<b>表象システム</b>と呼びます。</div>
+
+<h3>五感（VAKOG）</h3>
+<div class="kvs">
+<div class="kv"><span class="k">V ─ Visual（視覚）</span><span class="v">見る</span></div>
+<div class="kv"><span class="k">A ─ Auditory（聴覚）</span><span class="v">聞く・話す</span></div>
+<div class="kv"><span class="k">K ─ Kinesthetic（身体感覚）</span><span class="v">感じる・動く</span></div>
+<div class="kv"><span class="k">O ─ Olfactory（嗅覚）</span><span class="v">嗅ぐ</span></div>
+<div class="kv"><span class="k">G ─ Gustatory（味覚）</span><span class="v">味わう</span></div>
+</div>
+<p>五感で直接受け取る体験を<b>一次体験</b>といいます。受け取った情報は、そのままではなく、<b>削除・歪曲・一般化</b>というフィルターを通って意識に上がります。フィルターがなければ、人は情報の洪水に飲み込まれてしまうからです。</p>
+<p>だから、頭の中にあるのは現実そのものではなく、<b>現実の地図</b>です。1章の前提05「地図は領土ではない」は、ここにつながっています。<br><button class="linkbtn" data-text="t1" type="button">1章「NLPの前提」を読み返す →</button></p>
+
+<h3>言葉に、感覚が出る</h3>
+<p>人は、頭の中の感覚をそのまま言葉にしています。だから<b>話し言葉を聞けば、いまどの感覚を使っているか</b>が分かります。</p>
+<div class="kvs">
+<div class="kv"><span class="k">見る（V）</span><span class="v">見える、見通し、明るい、ぼやけた、描く、先が見えない、パッと</span></div>
+<div class="kv"><span class="k">聞く（A）</span><span class="v">聞こえる、言う、声、静か、耳に残る、うるさい、ガヤガヤ</span></div>
+<div class="kv"><span class="k">感じる（K）</span><span class="v">感じる、重い、温かい、つかむ、しっくりくる、胸がざわつく、ふわっと</span></div>
+<div class="kv"><span class="k">嗅ぐ・味わう（O・G）</span><span class="v">におう、香る、甘い、苦い、後味が悪い</span></div>
+<div class="kv"><span class="k">どれでもない言葉</span><span class="v">素晴らしい、幸せ、準備する、理解する。人によって、思い浮かべる感覚が違う言葉です。</span></div>
+</div>
+<p class="note" style="margin:0">「響く」「ピンとくる」のように、音とも体の感じとも取れる言葉もあります。1語で決めずに、<b>同じ感覚の言葉がくり返し出てくるか</b>で聞き分けます。</p>
+
+<h3>優先表象システム</h3>
+<p>人は五感をすべて使っていますが、多くの人には<b>自分にとって価値の高い感覚</b>があります。これを<b>優先表象システム</b>と呼びます。傾向はこう表れます。</p>
+<div class="kvs">
+<div class="kv"><span class="k">視覚が優位（V）</span><span class="v">描写が細かい／話すのが速い／見た目やデザインにこだわる／見ないと分からない／見る言葉が多い</span></div>
+<div class="kv"><span class="k">聴覚が優位（A）</span><span class="v">筋道立てて話す／話す速さは普通〜やや速い／言葉や音にこだわる／聞いたり読んだりしないと分からない／聞く言葉が多い</span></div>
+<div class="kv"><span class="k">身体感覚が優位（K）</span><span class="v">感覚で話す／話すのがゆっくり／雰囲気にこだわる／触れ合いを好む／感じる言葉が多い</span></div>
+</div>
+<p class="note" style="margin:0">「この人はVタイプ」と決めつけるための分類ではありません。場面によって変わります。<b>いまこの話で、どの感覚を使っているか</b>を聞き取るために使います。</p>
+
+<h3>相手の感覚に合わせる</h3>
+<p>相手の優先表象に合わせて話すと、相手は<b>よく聞けて、よく見える</b>ようになります。5章のラポールの「言葉を合わせる」は、ここまで細かくできます。</p>
+<div class="kvs">
+<div class="kv"><span class="k">相手</span><span class="v">「最近、なんだか先が見えなくて」</span></div>
+<div class="kv"><span class="k">ずれた返し</span><span class="v">「その気持ち、重たいですよね」（身体感覚で返している）</span></div>
+<div class="kv"><span class="k">合った返し</span><span class="v">「先が見えない。いま、どんな景色が見えていますか？」（視覚で返している）</span></div>
+</div>
+
+<h3>オーバーラップとトランスレーション</h3>
+<div class="kvs">
+<div class="kv"><span class="k">オーバーラップ</span><span class="v">ひとつの感覚から、別の感覚へ<b>移っていく</b>こと。相手の感覚に合わせてから、少しずつ他の感覚へ広げていきます。<br>例：「朝の駅のホームが見えてきます。電車が入ってくる音が聞こえて、足もとに少し風を感じます」（見る → 聞く → 感じる）</span></div>
+<div class="kv"><span class="k">トランスレーション</span><span class="v">同じ意味の言葉を、相手の感覚に合わせて<b>言い換える</b>こと。<br>例：「決心がついた」 → 見る：「道がはっきり見えた」／聞く：「迷いの声が静かになった」／感じる：「腹が決まった」</span></div>
+</div>
+<p>合わせる（ペーシング）→ 他の感覚へ広げる（オーバーラップ）→ 望む方向へ連れていく。これは、ラポールからリーディングへ進むときの、ひとつの道筋です。</p>
+
+<h3>コーチングの場面で</h3>
+<ul>
+<li><b>最初の3分は、相手の感覚の言葉を拾う。</b>「見える」が多いか、「感じる」が多いか</li>
+<li><b>質問も、相手の感覚で聞く。</b>「どう感じますか？」が届かない人には「どう見えますか？」の方が答えやすいことがあります</li>
+<li><b>行き詰まったら、別の感覚へ。</b>「頭では分かっているのに動けない」人には、見る・聞くから、身体感覚へ広げていきます</li>
+</ul>
+
+<h3>ドリルで練習する</h3>
+<p>この章の練習は、トップの「V 感覚の言葉」から回せます。相手の言葉から感覚を聞き分けて、その感覚の言葉で返す練習です。<br><button class="linkbtn" data-go="vak" type="button">感覚の言葉のドリルへ →</button></p>
+
+<h3>人と組んでやるワーク</h3>
+<ul>
+<li><b>センサリー・アウェアネス</b>（2人）… 「今、何を感じていますか？」と聞き、相手は五感それぞれで答える。交代する</li>
+<li><b>相手の優先表象に合わせる</b>（2人）… おすすめの話題を1分で相手に勧める。次に、相手の優先表象に合わせた言葉で、同じ内容をもう一度勧める。伝わり方の違いを確かめ合う</li>
+</ul>
+
+<h3>ふり返ってみよう</h3>
+<div class="kvs">
+<div class="kv"><span class="k">問い 1</span><span class="v">いちばん好きな場所を思い出してください。最初に浮かんだのは、景色・音・体の感じ、のどれでしたか。</span></div>
+<div class="kv"><span class="k">問い 2</span><span class="v">身近な人の口ぐせを1つ思い出してください。それは、どの感覚の言葉ですか。</span></div>
+<div class="kv"><span class="k">問い 3</span><span class="v">「やる気が出た」を、見る・聞く・感じるの3通りで言い換えてみましょう。</span></div>
+</div>
+
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>表象システム（VAKOG・一次体験・削除歪曲一般化のフィルター）、優先表象システムと各タイプの特徴、オーバーラップとトランスレーションの考え方、ワークの流れは教科書に沿っています。感覚の言葉の例・会話の例・オーバーラップとトランスレーションの例文・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` }
 ];
 const TX = {}; TEXTS.forEach(t => TX[t.id] = t);
 
@@ -2945,6 +3316,22 @@ function statsHTML(){
       }).join("")}
     </div>
 
+    ${store.records.some(r => r.p.startsWith("vk")) ? `
+    <div class="card">
+      <p class="eyebrow" style="margin:0 0 4px">感覚の言葉 — 入った ／ これから</p>
+      ${VK_SKILLS.map(k => {
+        const st = statsFor(k.id);
+        const w = st.n ? [st.o,st.t,st.x].map(v => v/st.n*100) : [0,0,0];
+        return `<div class="statrow">
+          <span class="nm">${esc(k.name)}</span>
+          <span class="ct">${st.n ? `${st.o}／${st.t}／${st.x}` : "—"}</span>
+          <span class="track">
+            <i class="o" style="width:${w[0]}%"></i><i class="t" style="width:${w[1]}%"></i><i class="x" style="width:${w[2]}%"></i>
+          </span>
+        </div>`;
+      }).join("")}
+    </div>` : ""}
+
     ${store.records.some(r => r.p.startsWith("gl")) ? `
     <div class="card">
       <p class="eyebrow" style="margin:0 0 4px">よくまとめられたゴール — 入った ／ これから</p>
@@ -3013,6 +3400,7 @@ function wire(){
       if(g === "single"){ start("single", false); }
       else if(g === "reframe"){ startRf(); }
       else if(g === "goal"){ startGl(); }
+      else if(g === "vak"){ startVk(); }
       else if(g === "weak"){ start("single", true); }
       else { view = g; render(); }
     });
@@ -3150,6 +3538,23 @@ function wire(){
   });
   const cln2 = document.getElementById("clearno");
   if(cln2) cln2.addEventListener("click", () => { delAllAsk = false; keepScroll = true; render(); });
+
+  app.querySelectorAll("[data-vk]").forEach(b => {
+    b.addEventListener("click", () => { vkPick = b.dataset.vk; keepScroll = true; render(); });
+  });
+  const vk1 = document.getElementById("vknext");
+  if(vk1) vk1.addEventListener("click", () => { vkStep = 2; render(); startTimer(); });
+  const vk2 = document.getElementById("vkreveal");
+  if(vk2) vk2.addEventListener("click", () => {
+    stopTimer(); grabWrite(["vkans1","vkans2"]);
+    noteSaved = false; noteDraft = null; vkStep = 3; render();
+  });
+  const vk3 = document.getElementById("vknextq");
+  if(vk3) vk3.addEventListener("click", () => {
+    record("vkp", vkPick === curVk.sense ? "o" : "t");
+    record("vkr", verdictOf(checked.filter(Boolean).length));
+    startVk();
+  });
 
   const rf1 = document.getElementById("rfnext");
   if(rf1) rf1.addEventListener("click", () => { stopTimer(); grabWrite(["rfans"]); rfStep = 2; render(); startTimer(); });
