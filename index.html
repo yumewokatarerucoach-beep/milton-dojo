@@ -1825,14 +1825,14 @@ function rfTaskHTML(){
       <span class="lbl">お題 / ${esc(curRf.kind)}</span>
       <h2>意味のリフレーミング</h2>
       <div class="form">この発言を否定せずに受け取ったうえで、<b>他にどんな意味・価値があるか</b>を足して返してください。</div>
-      <div class="form" style="color:var(--ink-3)">教科書の質問フレーズ：それにはどのような肯定的な意図がありますか？ ／ それには他にどのような意味がありますか？ ／ それには他にどのような価値がありますか？</div>
+      <div class="form" style="color:var(--ink-3)">使える質問フレーズ：それにはどのような肯定的な意図がありますか？ ／ それには他にどのような意味がありますか？ ／ それには他にどのような価値がありますか？</div>
     </div>`;
   }
   return `<div class="task">
     <span class="lbl">お題 / ${esc(curRf.kind)}</span>
     <h2>状況のリフレーミング</h2>
     <div class="form">同じ発言について、<b>どんな場面でなら役に立つか</b>を返してください。</div>
-    <div class="form" style="color:var(--ink-3)">教科書の質問フレーズ：それはどのような仕事で活かせますか？ ／ それは他のどのような状況で役に立ちますか？</div>
+    <div class="form" style="color:var(--ink-3)">使える質問フレーズ：それはどのような仕事で活かせますか？ ／ それは他のどのような状況で役に立ちますか？</div>
   </div>`;
 }
 function rfHTML(){
@@ -2319,7 +2319,7 @@ function homeHTML(){
     <div class="modes">
       <button class="mode" data-go="textbook" type="button">
         <span class="mk">T</span><b>テキスト（読む）</b>
-        <span>NLPの考え方を、教科書の順番で読めます。いま読めるのは0章〜7章（NLPってなに？／前提／TOTE／リフレーミング／ゴール／ラポール／キャリブレーション／表象システム）。</span>
+        <span>NLPの基本を順番に読めます。いま読めるのは0章〜9章（NLPってなに？／前提／TOTE／リフレーミング／ゴール／ラポール／キャリブレーション／表象システム／視線解析／コミュニケーションの要素とステイト）。</span>
       </button>
       <button class="mode" data-go="single" type="button">
         <span class="mk">A</span><b>単発ドリル</b>
@@ -3246,8 +3246,160 @@ const TEXTS = [
 <div class="kv"><span class="k">問い 3</span><span class="v">「やる気が出た」を、見る・聞く・感じるの3通りで言い換えてみましょう。</span></div>
 </div>
 
-<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>表象システム（VAKOG・一次体験・削除歪曲一般化のフィルター）、優先表象システムと各タイプの特徴、オーバーラップとトランスレーションの考え方、ワークの流れは教科書に沿っています。感覚の言葉の例・会話の例・オーバーラップとトランスレーションの例文・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` }
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>表象システム（VAKOG・一次体験・削除歪曲一般化のフィルター）、優先表象システムと各タイプの特徴、オーバーラップとトランスレーションの考え方、ワークの流れは教科書に沿っています。感覚の言葉の例・会話の例・オーバーラップとトランスレーションの例文・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` },
+  { id:"t8", no:"8", title:"視線解析", min:6, body:`<div class="hitokoto">人は何かを思い出したり想像したりするとき、目が動きます。NLPでは、その<b>目の動きの向き</b>を、いまどの感覚を使っているかの<b>観察の目安</b>にします。</div>
+
+<h3>まず大事なこと</h3>
+<p>この章の表は、<b>相手の心を当てるための表ではありません</b>。6章のキャリブレーションと同じで、<b>その人の中の違いに気づくための目安</b>です。</p>
+<ul>
+<li>右利きの人を基準にしています。<b>利き手が逆の人、腕や足を組んでいる人は、逆になることもあります</b></li>
+<li>一部だけを見て決めつけず、<b>全体を観察しながら、反応の違いに注目</b>します</li>
+<li>目の動きには個人差があります。「この人は、思い出すときにこっちを見る」という<b>その人のパターン</b>を、会話の中で確かめていきます</li>
+</ul>
+
+<h3>視線の向きと感覚</h3>
+{{EYECHART}}
+<p class="note" style="margin:0">V＝視覚、A＝聴覚、K＝身体感覚、Ad＝内部対話。c（constructed）＝想像して作る、r（remembered）＝思い出す。</p>
+
+<h3>どう使うか</h3>
+<p>見るのは「どこを見たか」より、<b>質問したときに目がどう動いたか</b>です。</p>
+<div class="kvs">
+<div class="kv"><span class="k">1 ─ その人のパターンを知る</span><span class="v">答えがはっきりしている質問（「今朝、何を食べましたか？」など）で、思い出すときの目の動きを見ておく。</span></div>
+<div class="kv"><span class="k">2 ─ 違いに気づく</span><span class="v">大事な話題になったとき、いつもと違う動きが出たら、そこが入り口です。</span></div>
+<div class="kv"><span class="k">3 ─ 感覚を合わせる</span><span class="v">目が上に動いている人に「どう感じますか？」より「どう見えますか？」と聞くと、答えやすくなることがあります。7章の表象システムとつながります。</span></div>
+</div>
+<p><button class="linkbtn" data-text="t7" type="button">7章「表象システム」を読む →</button>　<button class="linkbtn" data-text="t6" type="button">6章「キャリブレーション」を読む →</button></p>
+
+<h3>コーチングの場面で</h3>
+<ul>
+<li><b>目の動きから、中身を当てない。</b>「いま嘘をつきましたね」のような使い方は、ラポールを壊します</li>
+<li><b>質問への答えを待つサインとして使う。</b>目が動いているあいだは、相手の中で検索が起きています。次の質問をかぶせず、待ちます</li>
+<li><b>感覚の言葉と合わせて見る。</b>目の動きだけでなく、7章の感覚の言葉と一緒に見ると、読みちがいが減ります</li>
+</ul>
+
+<h3>人と組んでやるワーク</h3>
+<ul>
+<li><b>質問を考える</b> … 6つの向きそれぞれに対応する質問を考える。例：「紫色の象を思い浮かべてください」（Vc）／「昨日の夕食は何でしたか？」（Vr）／「好きな曲のサビを思い出してください」（Ar）／「冷たい水に手を入れた感じは？」（K）／「自分に言い聞かせている口ぐせは？」（Ad）</li>
+<li><b>目の動きを観察する</b> … その質問を相手にして、目がどの向きに動くかを見る。当てることより、<b>その人のパターン</b>をつかむことが目的です</li>
+</ul>
+
+<h3>ふり返ってみよう</h3>
+<div class="kvs">
+<div class="kv"><span class="k">問い 1</span><span class="v">鏡の前で「小学校の教室」を思い出してみてください。目はどちらに動きましたか。</span></div>
+<div class="kv"><span class="k">問い 2</span><span class="v">身近な人に、答えの決まった質問を3つしてみてください。目の動きに、その人らしいパターンはありましたか。</span></div>
+<div class="kv"><span class="k">問い 3</span><span class="v">「目の動きで心が読める」と思われないようにするには、人に説明するとき、どんな言い方をしますか。</span></div>
+</div>
+
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>視線の向きと感覚の対応（右利き基準）、利き手や腕組みで逆になる場合があること、一部だけで決めつけないこと、ワークの流れは教科書に沿っています。このアプリでは、目の動きを「観察の目安」として紹介しています。目の動きと感覚の対応は、研究で十分に確かめられているわけではありません。言い方・図・質問の例・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` },
+  { id:"t9", no:"9", title:"コミュニケーションの要素とステイト", min:8, body:`<div class="hitokoto">人は、言葉だけで伝えているわけではありません。そして、同じ言葉でも、<b>話し手がどんな状態（ステイト）にいるか</b>で、届き方が変わります。</div>
+
+<h3>コミュニケーションの3つの要素</h3>
+<div class="kvs">
+<div class="kv"><span class="k">言語</span><span class="v">言葉そのもの、話の内容。</span></div>
+<div class="kv"><span class="k">非言語</span><span class="v">表情・態度・姿勢・ジェスチャー。</span></div>
+<div class="kv"><span class="k">準言語</span><span class="v">声のトーン・話す速さ・抑揚。言葉に乗っている「声の表情」です。</span></div>
+</div>
+<p>やり取りされた情報は、すべて相手のフィルターを通って受け取られます。だから、どれか1つだけ整えても、伝わり方は決まりません。</p>
+
+<h3>「メラビアンの法則」の正しい扱い方</h3>
+<p>よく「言葉は7%、見た目が55%、声が38%」と紹介される数字があります。メラビアンの法則と呼ばれるものです。</p>
+<div class="hitokoto">ただし、これは<b>気持ちや態度を伝えるときに、言葉と態度が食い違っている</b>という特別な場面での研究結果です。ふだんの会話すべてに当てはまるわけではありません。</div>
+<p>「見た目がすべて」「言葉の中身は大事じゃない」は、言いすぎです。第一印象では見た目も大事ですが、<b>優れた話し手ほど、言葉の力の大きさを知っています</b>。言語・非言語・準言語の<b>ぜんぶを使う</b>のが基本です。</p>
+
+<h3>ステイトとは</h3>
+<p>ステイトとは、<b>ある程度続く、特定の心と体の状態</b>のことです。その人の体験から生まれていて、<b>常に変わり続けています</b>。</p>
+<p>たとえば、試合前の選手が入場してくるときの顔。大勢の前で話し始める直前の講師。同じ言葉を話していても、その人が<b>その状態にしっかり入っているかどうか</b>で、聞き手の受け取り方はまるで変わります。</p>
+<div class="kvs">
+<div class="kv"><span class="k">インステイト</span><span class="v">特定のステイトに<b>入る</b>こと。</span></div>
+<div class="kv"><span class="k">ブレイクステイト</span><span class="v">いまのステイトを、<b>いったんリセットする</b>こと。立ち上がる、窓の外を見る、まったく別の話をする、など。</span></div>
+</div>
+
+<h3>コーチングの場面で</h3>
+<ul>
+<li><b>まず、自分のステイトから。</b>コーチが焦っていたり疲れていたりすると、それが声や姿勢に出て、相手に伝わります。セッションの前に、自分がどんな状態で入るかを決めます</li>
+<li><b>相手のステイトを観察する。</b>言葉ではなく、表情・姿勢・声の変化から見ます<br><button class="linkbtn" data-text="t6" type="button">6章「キャリブレーション」を読む →</button></li>
+<li><b>行き詰まったら、ブレイクステイト。</b>同じ重い空気のまま話し続けず、いったん姿勢や話題を変えてから戻ります</li>
+<li><b>言葉と態度をそろえる。</b>「大丈夫ですよ」と言うなら、声も表情も「大丈夫」の状態で。食い違うと、相手は態度の方を信じます</li>
+</ul>
+
+<h3>人と組んでやるワーク</h3>
+<ul>
+<li><b>ステイトを当てる</b>（3〜4人）… 一人が言葉を使わずに、喜び・わくわく・悲しみ・怒り・イライラなどの状態に入る。他の人は、それがどの状態かを当てる。交代して、最後に感想を伝え合う</li>
+</ul>
+
+<h3>ふり返ってみよう</h3>
+<div class="kvs">
+<div class="kv"><span class="k">問い 1</span><span class="v">あなたが「いちばん調子がいい」ときの状態を思い出してください。そのとき、姿勢・呼吸・声はどうなっていますか。</span></div>
+<div class="kv"><span class="k">問い 2</span><span class="v">言葉と態度が食い違っている人に会ったとき、あなたはどちらを信じましたか。</span></div>
+<div class="kv"><span class="k">問い 3</span><span class="v">あなたがよく使う「ブレイクステイト」の方法は何ですか。まだないなら、1つ決めてみましょう。</span></div>
+</div>
+
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>コミュニケーションの3つの要素、メラビアンの法則の紹介と「特殊な状況での研究結果で、日常すべてには当てはまらない」という扱い、ステイトの定義、インステイト／ブレイクステイト、ワークの流れは教科書に沿っています。例・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` }
 ];
+
+/* ---- 8章の視線の図（自分の目／向かい合った相手 を切り替える） ---- */
+let eyeView = "self";
+const EYE_POS = ["tl","tr","ml","mr","bl","br"];
+const EYE_MAP = {
+  self:  { tl:"Vr", tr:"Vc", ml:"Ar", mr:"Ac", bl:"Ad", br:"K" },
+  other: { tl:"Vc", tr:"Vr", ml:"Ac", mr:"Ar", bl:"K",  br:"Ad" }
+};
+const EYE_TXT = {
+  Vc:["映像を想像","見たことのない映像を想像する"], Vr:["映像を思い出す","見たことのある映像を思い出す"],
+  Ac:["音を想像","聞いたことのない音を想像する"],   Ar:["音を思い出す","聞いたことのある音を思い出す"],
+  K:["体の感覚","体の感覚を感じる"],                Ad:["自分と話す","頭の中で自分と話す（内部対話）"]
+};
+const EYE_WHERE = { tl:"左上", tr:"右上", ml:"左横", mr:"右横", bl:"左下", br:"右下" };
+function eyeChartHTML(){
+  const m = EYE_MAP[eyeView];
+  const self = eyeView === "self";
+  const who = self ? "自分から見て" : "あなたから見て";
+  const lab = (pos, x, y, anchor) => `
+    <text x="${x}" y="${y}" text-anchor="${anchor}" font-size="13" font-weight="700" fill="var(--ink)">${m[pos]}</text>
+    <text x="${x}" y="${y+14}" text-anchor="${anchor}" font-size="10.5" fill="var(--ink-3)">${EYE_TXT[m[pos]][0]}</text>`;
+  return `
+  <div class="seg" id="segeye" style="align-self:flex-start">
+    <button type="button" data-eye="self" aria-pressed="${self}">自分の目</button>
+    <button type="button" data-eye="other" aria-pressed="${!self}">向かい合った相手</button>
+  </div>
+  <p class="note" style="margin:0">${self
+    ? "<b>自分が</b>思い出したり想像したりするとき、<b>自分の目</b>がどちらに動くか。左右は、あなた自身の左右です。"
+    : "セッションで<b>相手の顔を見ているとき</b>の向き。左右は、見ているあなたの左右です。<b>自分の目とは左右が逆</b>になります。"}</p>
+  <div style="max-width:420px;margin:0 auto;width:100%">
+  <svg viewBox="0 0 340 262" role="img" aria-label="${self ? "自分の目が動く6つの向き" : "向かい合った相手の目が動く6つの向き"}" style="width:100%;height:auto;display:block;color:var(--ink-2)">
+    <defs><marker id="eyeArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker></defs>
+    ${self ? `
+    <path d="M108 150 Q108 70 170 66 Q232 70 232 150" fill="none" stroke="currentColor" stroke-width="2" opacity=".35"/>
+    <ellipse cx="148" cy="122" rx="13" ry="9" fill="var(--surface)" stroke="currentColor" stroke-width="2"/>
+    <ellipse cx="192" cy="122" rx="13" ry="9" fill="var(--surface)" stroke="currentColor" stroke-width="2"/>
+    <circle cx="148" cy="122" r="3.5" fill="currentColor"/><circle cx="192" cy="122" r="3.5" fill="currentColor"/>
+    <text x="148" y="150" text-anchor="middle" font-size="10" fill="var(--ink-3)">左目</text>
+    <text x="192" y="150" text-anchor="middle" font-size="10" fill="var(--ink-3)">右目</text>
+    ` : `
+    <ellipse cx="170" cy="135" rx="62" ry="74" fill="var(--surface)" stroke="currentColor" stroke-width="2"/>
+    <path d="M118 88 Q170 50 222 88" fill="none" stroke="currentColor" stroke-width="2" opacity=".35"/>
+    <ellipse cx="148" cy="122" rx="12" ry="8" fill="none" stroke="currentColor" stroke-width="2"/>
+    <ellipse cx="192" cy="122" rx="12" ry="8" fill="none" stroke="currentColor" stroke-width="2"/>
+    <circle cx="148" cy="122" r="3.5" fill="currentColor"/><circle cx="192" cy="122" r="3.5" fill="currentColor"/>
+    <path d="M170 132 L165 156 L174 156" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".6"/>
+    <path d="M154 178 Q170 188 186 178" fill="none" stroke="currentColor" stroke-width="2"/>
+    `}
+    <g stroke="var(--accent)" stroke-width="2" fill="none" marker-end="url(#eyeArrow)">
+      <line x1="140" y1="112" x2="92" y2="58"/><line x1="200" y1="112" x2="248" y2="58"/>
+      <line x1="132" y1="122" x2="96" y2="122"/><line x1="208" y1="122" x2="244" y2="122"/>
+      <line x1="140" y1="132" x2="92" y2="190"/><line x1="200" y1="132" x2="248" y2="190"/>
+    </g>
+    ${lab("tl",84,42,"end")}${lab("tr",256,42,"start")}
+    ${lab("ml",88,118,"end")}${lab("mr",252,118,"start")}
+    ${lab("bl",84,210,"end")}${lab("br",256,210,"start")}
+    <text x="170" y="254" text-anchor="middle" font-size="10.5" fill="var(--ink-3)">${self ? "あなた自身の目（右利きの場合）" : "あなたが向かい合っている相手（右利き）"}</text>
+  </svg>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    ${EYE_POS.map(pos => `<div class="kv" style="background:var(--surface);border:1px solid var(--line-soft);border-radius:10px;padding:10px 12px"><span class="k">${who} ${EYE_WHERE[pos]}</span><span class="v"><b>${m[pos]}</b> ${EYE_TXT[m[pos]][1]}</span></div>`).join("")}
+  </div>`;
+}
+
 const TX = {}; TEXTS.forEach(t => TX[t.id] = t);
 
 function textbookHTML(){
@@ -3255,15 +3407,14 @@ function textbookHTML(){
   <div style="display:flex;flex-direction:column;gap:16px">
     <div class="stepbar"><span>テキスト — 目次</span><span class="sp"></span>
       <button class="themebtn" data-go="home" type="button">← 戻る</button></div>
-    <p class="muted" style="margin:0">NLPの考え方を、教科書の順番どおりに読めます。読み終えた章には「読んだ」の印がつきます。印は、この端末の中だけに残ります。</p>
+    <p class="muted" style="margin:0">NLPの基本を順番に読めます。読み終えた章には「読んだ」の印がつきます。印は、この端末の中だけに残ります。</p>
     <div class="modes">
       ${TEXTS.map(t => `
         <button class="mode" data-text="${t.id}" type="button">
           <span class="mk">${t.no}</span><b>${esc(t.title)}${store.read.includes(t.id) ? `<span class="rd">読んだ</span>` : ""}</b>
-          <span>読む目安 ${t.min}分</span>
         </button>`).join("")}
     </div>
-    <div class="card"><p class="note" style="margin:0">続きの章は、教科書の順番で少しずつ足していきます。</p></div>
+    <div class="card"><p class="note" style="margin:0">続きの章も、順番に少しずつ足していきます。</p></div>
     <p class="note" style="margin:0">※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</p>
   </div>`;
 }
@@ -3277,7 +3428,7 @@ function chapterHTML(){
     <div class="stepbar"><span>テキスト — ${t.no}章</span><span class="sp"></span>
       <button class="themebtn" data-go="textbook" type="button">← 目次</button></div>
     <h2>${esc(t.title)}</h2>
-    ${t.body}
+    ${t.body.replace("{{EYECHART}}", eyeChartHTML())}
     <div class="btnrow">
       ${nx ? `<button class="btn" data-read="${t.id}" data-next="${nx.id}" type="button">読み終えた — 次へ（${esc(nx.title)}）</button>`
            : `<button class="btn" data-read="${t.id}" type="button">読み終えた — 目次へ</button>`}
@@ -3554,6 +3705,10 @@ function wire(){
     record("vkp", vkPick === curVk.sense ? "o" : "t");
     record("vkr", verdictOf(checked.filter(Boolean).length));
     startVk();
+  });
+
+  app.querySelectorAll("[data-eye]").forEach(b => {
+    b.addEventListener("click", () => { eyeView = b.dataset.eye; keepScroll = true; render(); });
   });
 
   const rf1 = document.getElementById("rfnext");
