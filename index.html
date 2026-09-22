@@ -1599,6 +1599,101 @@ const VAKS = [
     "「つかむ・手をつける」は手の言葉。手に取れるサイズまで小さくする。")
 ];
 
+/* ===================== チャンキング（10章のドリル） ===================== */
+/* 相手のひとことを、上げる／下げる／横に広げる。どの方向が効きやすいかを見立て、その方向の質問を作る。発言はすべて架空。 */
+const CH_DIR = [
+  { id:"up",   name:"上げる（チャンクアップ）",   short:"上げる",     word:"なんのために？ それで何が手に入る？" },
+  { id:"down", name:"下げる（チャンクダウン）",   short:"下げる",     word:"具体的には？ どの場面で？" },
+  { id:"side", name:"横に広げる（水平チャンク）", short:"横に広げる", word:"同じ仲間で、ほかには？" }
+];
+const CD = {}; CH_DIR.forEach(v => CD[v.id] = v);
+const CH_SKILLS = [{ id:"chp", name:"動かす方向を見立てる" }, { id:"chq", name:"その方向の質問を作る" }];
+const CH_CHECKS = [
+  "選んだ方向に合った質問になっていたか",
+  "相手が使った言葉を、そのまま拾えたか",
+  "相手が答えやすい、短い聞き方になっていたか"
+];
+const C_ = (dir,u,cues,qs,alt,point) => ({dir,u,cues,qs,alt,point});
+const CHUNKS = [
+  /* --- 上げる --- */
+  C_("up","毎朝5時に起きて、参考書を3冊やってるんですけど、全然終わらないんです。", ["毎朝5時","参考書を3冊"],
+    ["その3冊を終えたら、何が手に入りますか？","そもそも、なんのために勉強していますか？"],
+    "下げるなら：3冊のうち、いちばん重いのはどれですか？",
+    "手段の話が細かくなっているときは、いったん上げて目的に戻す。"),
+  C_("up","とにかくエクセルが苦手で。関数も覚えられないし、ショートカットも分からない。", ["エクセルが苦手","関数","ショートカット"],
+    ["エクセルが使えるようになったら、仕事はどう変わりますか？","なんのために、そこを直したいんですか？"],
+    "下げるなら：いま困っているのは、どの作業の場面ですか？",
+    "苦手の中身を並べ続けるより、その先に何があるかを聞くと、足が前に向く。"),
+  C_("up","この前のプレゼン、資料の色を変えたら、すごく反応がよかったんです。", ["資料の色","反応がよかった"],
+    ["その反応がよかったことは、あなたにとって何が大きいですか？","そこで見つけたコツを、ひとことで言うと何ですか？"],
+    "下げるなら：具体的に、どんな反応が返ってきましたか？",
+    "うまくいった話も上げると、他の場面でも使える「自分のコツ」になる。"),
+  C_("up","あの人が会議で私の意見をさえぎるから、腹が立って。", ["さえぎる","腹が立って"],
+    ["その会議が、本当はどうなってほしいですか？","あなたとあの人が、同じように望んでいることは何だと思いますか？"],
+    "下げるなら：さえぎられたのは、どの場面でしたか？",
+    "対立しているときは上げる。上げていくと、二人が同じように望んでいたことが見つかることがある。"),
+  C_("up","転職サイトに登録して、10社くらいスカウトが来てるんですけど、どれもピンとこなくて。", ["10社","ピンとこなくて"],
+    ["次の仕事で、いちばん手に入れたいものは何ですか？","ピンとくる会社には、どんな共通点がありそうですか？"],
+    "横に広げるなら：これまで「ここはよかった」と思えた職場を、いくつか挙げられますか？",
+    "選べないのは、選ぶ基準がまだ言葉になっていないから。上げて基準を作る。"),
+  C_("up","毎週水曜のランニング、3か月続いてるんですよ。", ["毎週水曜","3か月続いて"],
+    ["3か月続いたことで、何が手に入りましたか？","続けられているのは、あなたのどんなところだと思いますか？"],
+    "下げるなら：水曜日の、どの時間に走っていますか？",
+    "続いている事実を上げると、他のことにも使える自信になる。"),
+
+  /* --- 下げる --- */
+  C_("down","もっと自分に自信を持ちたいんです。", ["自信"],
+    ["自信があるとしたら、どんな場面で、どんな行動をしていますか？","具体的には、誰の前で自信を持ちたいですか？"],
+    "上げるなら：自信が持てたら、その先で何をしたいですか？",
+    "「自信」は大きな言葉。場面と行動まで下げると、練習できる形になる。"),
+  C_("down","うちの職場、ぜんぜんコミュニケーションが取れてないんですよ。", ["ぜんぜん","コミュニケーション"],
+    ["取れていないのは、誰と誰の間ですか？","具体的には、どんな場面でそう感じますか？"],
+    "上げるなら：コミュニケーションが取れている職場だと、何ができるようになりますか？",
+    "大きな主語と大きな言葉が重なると、手が出せない。まず場面と人まで下げる。"),
+  C_("down","来年こそ、ちゃんとした生活を送りたいです。", ["ちゃんとした生活"],
+    ["「ちゃんとした」を朝の1時間でいうと、何をしていますか？","その生活になったとき、まず何が変わっていますか？"],
+    "上げるなら：ちゃんとした生活を送ることは、あなたにとって何のためですか？",
+    "「ちゃんと」は人によって中身が違う。その人の言葉で具体にしてもらう。"),
+  C_("down","最近、チームの雰囲気がすごくいいんです。", ["雰囲気がすごくいい"],
+    ["いいと感じたのは、誰のどんな様子を見たときですか？","前と比べて、具体的に何が変わりましたか？"],
+    "上げるなら：この雰囲気が続くと、チームは何を実現できそうですか？",
+    "うまくいっている状態も下げる。何が効いているか分かれば、また作れる。"),
+  C_("down","もう限界です。全部うまくいかない。", ["限界","全部"],
+    ["いま、いちばん重いのはどれですか？","「全部」の中で、今日だけ置いておけるものはありますか？"],
+    "横に広げるなら：同じくらい大変だった時期を、前にも越えたことはありますか？",
+    "つらいときに上げると、話が大きくなってもっと重くなる。まず一つに絞って小さくする。"),
+  C_("down","部下がやる気がないんです。", ["やる気がない"],
+    ["やる気がないと感じたのは、その人のどんな様子からですか？","最近でいうと、いつの、どの場面でしたか？"],
+    "上げるなら：その人に、どうなってほしいですか？",
+    "「やる気がない」は見たことではなく、判断。何を見てそう思ったのか、事実まで下げる。"),
+
+  /* --- 横に広げる --- */
+  C_("side","休みの日は、家でゴロゴロしてるだけなんです。", ["家でゴロゴロ","だけ"],
+    ["ゴロゴロのほかに、休みの日にやっていることはありますか？","同じくらい力を使わずにできることって、ほかに何がありますか？"],
+    "下げるなら：ゴロゴロしている時間は、どのくらいですか？",
+    "横に広げると、本人が「ない」と思っていた選択肢が出てくる。"),
+  C_("side","相談できるのは、あの先輩だけなんです。", ["あの先輩だけ"],
+    ["先輩と同じくらい話しやすい人は、ほかにいませんか？","仕事の外では、誰に話していますか？"],
+    "上げるなら：その先輩に相談すると、何が手に入りますか？",
+    "「〜だけ」は一般化の言葉。横に並べると、地図に載っていなかった人が出てくる。"),
+  C_("side","朝、散歩すると頭がすっきりするんです。", ["散歩","すっきり"],
+    ["散歩と同じくらいすっきりすることは、ほかにありますか？","雨の日は、代わりに何をしていますか？"],
+    "上げるなら：すっきりすると、その後の一日はどう変わりますか？",
+    "効いている方法を横に並べておくと、できない日の代わりが用意できる。"),
+  C_("side","営業といえば、飛び込みしかないと思ってて。", ["飛び込みしかない"],
+    ["飛び込みのほかに、お客さんと出会う方法にはどんなものがありますか？","同じ業界の人は、ほかにどんなやり方をしていますか？"],
+    "上げるなら：飛び込みで、なんのために会おうとしていますか？",
+    "やり方が一つしかないと思っているときは、まず横に広げる。"),
+  C_("side","うちの子、ゲームばっかりで。", ["ゲームばっかり"],
+    ["ゲームのほかに、続いていることはありますか？","前は、時間を忘れて何をしていましたか？"],
+    "下げるなら：ゲームは、一日のどの時間にやっていますか？",
+    "「ばっかり」も一般化。同じ大きさで並べると、見落としていた面が出てくる。"),
+  C_("side","今の仕事、人に教えるところが好きなんですよね。", ["人に教えるところが好き"],
+    ["教えること以外に、好きだと感じる場面はありますか？","教えるのと同じくらい面白いと思う作業は、何ですか？"],
+    "下げるなら：教えているとき、どの瞬間がいちばん好きですか？",
+    "好きなことを横に並べると、その人が力を出せる型が見えてくる。")
+];
+
 const KEY = "milton-drill-v1";
 const MAX_RECORDS = 400;
 let store = { records: [], timer: 0, fs: 1, level: "normal", read: [], notes: [] };
@@ -2133,6 +2228,127 @@ function vkHTML(){
   </div>`;
 }
 
+/* ---- チャンキングドリルの出題と画面 ---- */
+let curCh = null;
+let chStep = 1;          // 1 方向を見立てる / 2 質問を作る / 3 答え合わせ
+let chPick = null;       // 選んだ方向
+let chRecent = [];
+
+function pickCh(){
+  const pool = CHUNKS.filter((_,i) => !chRecent.includes(i));
+  const list = pool.length ? pool : CHUNKS;
+  const d = list[Math.floor(Math.random() * list.length)];
+  chRecent.push(CHUNKS.indexOf(d));
+  if(chRecent.length > 6) chRecent.shift();
+  return d;
+}
+function startCh(){
+  mode = "chunk";
+  noteSaved = false; noteDraft = null; lastWrite = [];
+  curCh = pickCh();
+  chStep = 1; chPick = null;
+  checked = [false,false,false];
+  expired = false;
+  view = "chunk";
+  render();
+}
+/* 手がかりの言葉に色をつける */
+function chMarked(d){
+  let h = esc(d.u);
+  d.cues.forEach(c => { h = h.split(esc(c)).join(`<mark style="background:var(--accent-soft);color:var(--ink);padding:0 2px;border-radius:3px">${esc(c)}</mark>`); });
+  return h;
+}
+function chHTML(){
+  const d = curCh;
+  const n = checked.filter(Boolean).length;
+  const fb = feedbackOf(n);
+  const ok = chPick === d.dir;
+  return `
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="stepbar">
+      <span>チャンキング</span>
+      <span class="dot on"></span>
+      <span class="dot ${chStep >= 2 ? "on" : ""}"></span>
+      <span class="dot ${chStep >= 3 ? "on" : ""}"></span>
+      <span class="sp"></span><button class="themebtn" data-go="home" type="button">← 戻る</button>
+    </div>
+
+    <div class="utter"><div class="who">クライアント役</div><p>「${chStep >= 3 ? chMarked(d) : esc(d.u)}」</p></div>
+
+    ${chStep === 1 ? `
+      <div class="task">
+        <span class="lbl">お題 / 見立てる</span>
+        <h2>この話、どっちに動かす？</h2>
+        <div class="form">話のかたまりの大きさを、どちらへ動かすと前に進みそうか選んでください。</div>
+      </div>
+      <div class="checks">
+        ${CH_DIR.map(v => `
+          <button class="chk" type="button" data-ch="${v.id}" aria-pressed="${chPick === v.id}">
+            <span class="box">✓</span><span><b>${esc(v.name)}</b><br><span style="color:var(--ink-3);font-size:.9em">${esc(v.word)}</span></span>
+          </button>`).join("")}
+      </div>
+      <button class="btn" id="chnext" type="button">次へ — 質問を作る</button>
+    ` : chStep === 2 ? `
+      <div class="task">
+        <span class="lbl">お題 / 質問を作る</span>
+        <h2>${chPick ? esc(CD[chPick].short) + "質問をつくる" : "動かす質問をつくる"}</h2>
+        <div class="form">選んだ方向へ動かす質問を、ひとつ書いてください。相手が使った言葉をそのまま拾うと、答えやすくなります。</div>
+      </div>
+      <div class="speak"><span class="n">1</span>まず声に出して言う</div>
+      ${timerHTML()}
+      <div class="speak"><span class="n">2</span>それから書く</div>
+      <textarea id="chans1" placeholder="動かす質問"></textarea>
+      <div class="task" style="padding-bottom:10px">
+        <span class="lbl">任意</span>
+        <h2 style="font-size:1.02rem">もうひとつ、別の方向へ</h2>
+        <div class="form" style="color:var(--ink-3)">同じ発言を、別の方向へ動かす質問。書かずに進んでもかまいません。</div>
+        <textarea id="chans2" placeholder="別の方向へ動かす質問"></textarea>
+      </div>
+      <button class="btn" id="chreveal" type="button">答え合わせ</button>
+    ` : `
+      <hr class="hr">
+      <div class="model">
+        <h3>この場面で効きやすい方向：${esc(CD[d.dir].name)}</h3>
+        <ul><li>手がかりの言葉：${d.cues.map(c => "「" + esc(c) + "」").join("、")}</li></ul>
+        <div class="point"><b>あなたの見立て：</b>${chPick ? esc(CD[chPick].name) : "選択なし"}　${ok ? "— 同じ方向です。" : "— 別の方向でも話は進みます。下の例と見くらべてみてください。"}</div>
+      </div>
+      <div class="model">
+        <h3>${esc(CD[d.dir].short)}質問の例</h3>
+        <ul>${d.qs.map(m => `<li>${esc(m)}</li>`).join("")}</ul>
+      </div>
+      <div class="model">
+        <h3>別の方向へ動かすなら</h3>
+        <ul><li>${esc(d.alt)}</li></ul>
+        <div class="point"><b>ポイント：</b>${esc(d.point)}</div>
+      </div>
+
+      ${noteBtnHTML()}
+
+      <div>
+        <p class="eyebrow" style="margin:0 0 9px">ふりかえり — 入っていたものをタップ</p>
+        <p class="note" style="margin:0 0 9px">次の問題へ進むと、練習が1回分積み上がります。</p>
+        <div class="checks">
+          ${CH_CHECKS.map((c,i) => `
+            <button class="chk" type="button" data-chk="${i}" aria-pressed="${checked[i]}">
+              <span class="box">✓</span><span>${esc(c)}</span>
+            </button>`).join("")}
+        </div>
+      </div>
+
+      <div class="verdict">
+        <span class="g ${fb.cls}">${fb.glyph}</span>
+        <span class="t"><b>${fb.label}</b>${fb.desc}</span>
+      </div>
+      ${fb.key === "start" ? `<p class="premise">うまくいかなかった結果も、次へのヒント（フィードバック）です。<span>— NLPの前提より</span></p>` : ""}
+
+      <div class="btnrow">
+        <button class="btn" id="chnextq" type="button">次の問題へ</button>
+        <button class="btn ghost" data-go="home" type="button">終了</button>
+      </div>
+    `}
+  </div>`;
+}
+
 /* ===================== 言葉帳（自分の言い回しを残す） ===================== */
 /* 「言葉帳に残す」を押して、直してから保存する。この端末の中だけ。外には一切送らない。 */
 const MAX_NOTES = 200;
@@ -2162,6 +2378,10 @@ function noteData(){
   if(mode === "vak" && curVk){
     return { head:"感覚の言葉（" + VS[curVk.sense].name + "）", u:curVk.u, labels:["同じ感覚で返す","別の感覚へ"],
       models:curVk.back.concat([curVk.over]), point:curVk.point };
+  }
+  if(mode === "chunk" && curCh){
+    return { head:"チャンキング（" + CD[curCh.dir].short + "）", u:curCh.u, labels:["動かす質問","別の方向へ"],
+      models:curCh.qs.concat([curCh.alt]), point:curCh.point };
   }
   if(mode === "goal" && curGl){
     return { head:"ゴールを整える", u:curGl.u, labels:GOAL_COND.map(c => c.no + ". " + c.name),
@@ -2299,6 +2519,7 @@ function render(){
   else if(view === "reframe") app.innerHTML = rfHTML();
   else if(view === "goal") app.innerHTML = glHTML();
   else if(view === "vak") app.innerHTML = vkHTML();
+  else if(view === "chunk") app.innerHTML = chHTML();
   else if(view === "notes") app.innerHTML = notesHTML();
   wire();
   if(keepScroll){ keepScroll = false; window.scrollTo({top:y, behavior:"auto"}); }
@@ -2319,7 +2540,7 @@ function homeHTML(){
     <div class="modes">
       <button class="mode" data-go="textbook" type="button">
         <span class="mk">T</span><b>テキスト（読む）</b>
-        <span>NLPの基本を順番に読めます。いま読めるのは0章〜9章（NLPってなに？／前提／TOTE／リフレーミング／ゴール／ラポール／キャリブレーション／表象システム／視線解析／コミュニケーションの要素とステイト）。</span>
+        <span>NLPの基本を順番に読めます。いま読めるのは0章〜10章（NLPってなに？／前提／TOTE／リフレーミング／ゴール／ラポール／キャリブレーション／表象システム／視線解析／コミュニケーションの要素とステイト／チャンキング）。</span>
       </button>
       <button class="mode" data-go="single" type="button">
         <span class="mk">A</span><b>単発ドリル</b>
@@ -2340,6 +2561,10 @@ function homeHTML(){
       <button class="mode" data-go="vak" type="button">
         <span class="mk">V</span><b>感覚の言葉</b>
         <span>相手の言葉から「見る・聞く・感じる」を聞き分けて、同じ感覚の言葉で返す練習。${VAKS.length}問。7章とセットです。</span>
+      </button>
+      <button class="mode" data-go="chunk" type="button">
+        <span class="mk">C</span><b>チャンキング</b>
+        <span>相手のひとことを、上げる・下げる・横に広げるのどこへ動かすか見立てて、その質問を作る練習。${CHUNKS.length}問。10章とセットです。</span>
       </button>
       <button class="mode" data-go="metapick" type="button">
         <span class="mk">M</span><b>メタモデル（長文ワーク）</b>
@@ -2859,7 +3084,7 @@ const TEXTS = [
 <div class="kv"><span class="k">ひとことで</span><span class="v">人は、現実の世界をそのまま見ているのではありません。自分の目や耳、思い込みを通して、頭の中に作った「地図」を見ています。</span></div>
 <div class="kv"><span class="k">たとえば</span><span class="v">同じ雨の日でも、遠足の日の子どもには「最悪」、畑を作っている人には「ありがたい」。雨は同じなのに、頭の中の地図が違います。</span></div>
 <div class="kv"><span class="k">コーチングの場面で</span><span class="v">相手の話を「本当にあったこと」ではなく「その人の地図」として聴きます。地図が間違っていると言わずに、まだ地図に載っていない道を一緒に探します。</span></div>
-<div class="kv"><span class="k">つながり</span><span class="v">メタモデル（準備中）<br><button class="linkbtn" data-go="metapick" type="button">メタモデルの長文ワークで練習する →</button></span></div>
+<div class="kv"><span class="k">つながり</span><span class="v"><button class="linkbtn" data-text="t10" type="button">10章「チャンキング」を読む →</button>　メタモデル（準備中）<br><button class="linkbtn" data-go="metapick" type="button">メタモデルの長文ワークで練習する →</button></span></div>
 </div></details>
 <details class="ref pp"><summary><span class="no">06</span>人の大切さは変わらない。見直すのは行動</summary><div class="body">
 <div class="kv"><span class="k">むずかしく言うと</span><span class="v">人の肯定的な価値は一定。問われるのは、その反応がふさわしいかどうか</span></div>
@@ -3334,7 +3559,58 @@ const TEXTS = [
 <div class="kv"><span class="k">問い 3</span><span class="v">あなたがよく使う「ブレイクステイト」の方法は何ですか。まだないなら、1つ決めてみましょう。</span></div>
 </div>
 
-<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>コミュニケーションの3つの要素、メラビアンの法則の紹介と「特殊な状況での研究結果で、日常すべてには当てはまらない」という扱い、ステイトの定義、インステイト／ブレイクステイト、ワークの流れは教科書に沿っています。例・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` }
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>コミュニケーションの3つの要素、メラビアンの法則の紹介と「特殊な状況での研究結果で、日常すべてには当てはまらない」という扱い、ステイトの定義、インステイト／ブレイクステイト、ワークの流れは教科書に沿っています。例・コーチングの場面・ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` },
+  { id:"t10", no:"10", title:"チャンキング", min:9, body:`<div class="hitokoto">同じ話でも、扱う<b>かたまりの大きさ</b>を変えると、見え方が変わります。大きさを動かすのが、チャンキングです。</div>
+
+<h3>チャンキングとは</h3>
+<p>チャンキングとは、物事を<b>ある順序で区分けする・まとめる・並べる</b>ことです。ある出来事を受け取るとき、情報として扱うサイズは、人によって違います。</p>
+<p>たとえば、ペットの話です。</p>
+<div class="kvs">
+<div class="kv"><span class="k">チャンク大</span><span class="v">ペット</span></div>
+<div class="kv"><span class="k">チャンク中</span><span class="v">犬　／　猫　／　うさぎ</span></div>
+<div class="kv"><span class="k">チャンク小</span><span class="v">柴犬　／　トイプードル　／　チワワ　<span style="color:var(--ink-3)">（「犬」をさらに小さくしたもの）</span></span></div>
+</div>
+<p class="note" style="margin:0 0 14px">上下に動くのが<b>大きさ</b>の変化。<b>同じ段の中で横に並んでいるもの</b>（犬・猫・うさぎ）が、横に広げた形です。</p>
+<p>「どんなペットを飼いたい？」と聞かれて「ペットならなんでも」と答えるのと、「柴犬がいい」と答えるのとでは、相手の動き方がまるで違います。<b>扱う大きさが変われば、相手の頭に浮かぶものが変わり、返ってくる反応も変わります</b>。これは1章の前提05「地図は領土ではない」につながる話です。<br><button class="linkbtn" data-text="t1" type="button">1章「NLPの前提」を読み返す →</button></p>
+
+<h3>動かす方向は3つ</h3>
+<div class="kvs">
+<div class="kv"><span class="k">チャンクアップ</span><span class="v">かたまりを<b>大きくする</b>（一般化する）。全体を見る方向です。柴犬 → 犬 → ペット。</span></div>
+<div class="kv"><span class="k">チャンクダウン</span><span class="v">かたまりを<b>小さくする</b>（具体化する）。部分を見る方向です。ペット → 犬 → 柴犬。</span></div>
+<div class="kv"><span class="k">水平チャンク</span><span class="v">同じ大きさのまま、<b>横に広げる</b>。例を増やす方向です。犬 → 猫、うさぎ、ハムスター。平行チャンクとも呼びます。</span></div>
+</div>
+
+<h3>動かすための質問</h3>
+<div class="kvs">
+<div class="kv"><span class="k">上げる</span><span class="v">「なんのために？」「それで、何が手に入りますか？」</span></div>
+<div class="kv"><span class="k">下げる</span><span class="v">「具体的には、何ですか？」「どの場面でですか？」</span></div>
+<div class="kv"><span class="k">横に広げる</span><span class="v">「同じ仲間で、ほかには？」「代わりになるものは、ありますか？」</span></div>
+</div>
+
+<h3>コーチングの場面で</h3>
+<ul>
+<li><b>話が大きすぎて動かないときは、下げる。</b>「自信を持ちたい」「ちゃんとしたい」のような大きな言葉は、場面と行動まで下げると、練習できる形になります</li>
+<li><b>細かい話に埋もれているときは、上げる。</b>手段や不満が並び始めたら「なんのために？」で目的に戻します</li>
+<li><b>選択肢が一つしかないときは、横に広げる。</b>「これしかない」と言う人に、同じ大きさの別の例を並べてもらいます</li>
+<li><b>意見がぶつかっているときは、上げる。</b>上げていくと、二人が同じように望んでいたことが見つかることがあります</li>
+<li><b>つらい話のときに、いきなり上げない。</b>話が大きくなって、もっと重くなることがあります。まず一つに絞って小さくします</li>
+</ul>
+
+<h3>人と組んでやるワーク</h3>
+<ul>
+<li><b>チャンキングしてみよう</b>（3〜4人）… まず、チャンキングするための質問をみんなで考える。次に、身の回りの物事を一つ選んで、上・下・横に動かしてみる。最後に感想を伝え合う</li>
+</ul>
+
+<h3>ふり返ってみよう</h3>
+<div class="kvs">
+<div class="kv"><span class="k">問い 1</span><span class="v">あなたが人の話を聞くとき、上げるのと下げるのでは、どちらが多いですか。</span></div>
+<div class="kv"><span class="k">問い 2</span><span class="v">いま気になっていることを一つ選んで、「なんのために？」と3回くり返してみてください。何が出てきましたか。</span></div>
+<div class="kv"><span class="k">問い 3</span><span class="v">同じことを「具体的には？」で3回下げると、今日できることは何になりますか。</span></div>
+</div>
+
+<p>この章の練習は、トップの「C チャンキング」から回せます。相手のひとことをどちらへ動かすか見立てて、その質問を作る練習です。<br><button class="linkbtn" data-go="chunk" type="button">チャンキングのドリルへ →</button></p>
+
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>チャンキングの意味、扱うサイズは人それぞれで「地図は領土ではない」につながること、チャンクアップ（一般化・全体的）・チャンクダウン（具体化・部分的）・水平チャンク（並列）の3つ、上げる質問「なんのために？」「何か手に入るのか」、下げる質問「具体的に何か？」、ワークの流れは教科書に沿っています。ペットのたとえ、横に広げる質問の言い方、コーチングの場面、ドリルの発言と質問例、ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` }
 ];
 
 /* ---- 8章の視線の図（自分の目／向かい合った相手 を切り替える） ---- */
@@ -3467,6 +3743,22 @@ function statsHTML(){
       }).join("")}
     </div>
 
+    ${store.records.some(r => r.p.startsWith("ch")) ? `
+    <div class="card">
+      <p class="eyebrow" style="margin:0 0 4px">チャンキング — 入った ／ これから</p>
+      ${CH_SKILLS.map(k => {
+        const st = statsFor(k.id);
+        const w = st.n ? [st.o,st.t,st.x].map(v => v/st.n*100) : [0,0,0];
+        return `<div class="statrow">
+          <span class="nm">${esc(k.name)}</span>
+          <span class="ct">${st.n ? `${st.o}／${st.t}／${st.x}` : "—"}</span>
+          <span class="track">
+            <i class="o" style="width:${w[0]}%"></i><i class="t" style="width:${w[1]}%"></i><i class="x" style="width:${w[2]}%"></i>
+          </span>
+        </div>`;
+      }).join("")}
+    </div>` : ""}
+
     ${store.records.some(r => r.p.startsWith("vk")) ? `
     <div class="card">
       <p class="eyebrow" style="margin:0 0 4px">感覚の言葉 — 入った ／ これから</p>
@@ -3552,6 +3844,7 @@ function wire(){
       else if(g === "reframe"){ startRf(); }
       else if(g === "goal"){ startGl(); }
       else if(g === "vak"){ startVk(); }
+      else if(g === "chunk"){ startCh(); }
       else if(g === "weak"){ start("single", true); }
       else { view = g; render(); }
     });
@@ -3705,6 +3998,23 @@ function wire(){
     record("vkp", vkPick === curVk.sense ? "o" : "t");
     record("vkr", verdictOf(checked.filter(Boolean).length));
     startVk();
+  });
+
+  app.querySelectorAll("[data-ch]").forEach(b => {
+    b.addEventListener("click", () => { chPick = b.dataset.ch; keepScroll = true; render(); });
+  });
+  const ch1 = document.getElementById("chnext");
+  if(ch1) ch1.addEventListener("click", () => { chStep = 2; render(); startTimer(); });
+  const ch2 = document.getElementById("chreveal");
+  if(ch2) ch2.addEventListener("click", () => {
+    stopTimer(); grabWrite(["chans1","chans2"]);
+    noteSaved = false; noteDraft = null; chStep = 3; render();
+  });
+  const ch3 = document.getElementById("chnextq");
+  if(ch3) ch3.addEventListener("click", () => {
+    record("chp", chPick === curCh.dir ? "o" : "t");
+    record("chq", verdictOf(checked.filter(Boolean).length));
+    startCh();
   });
 
   app.querySelectorAll("[data-eye]").forEach(b => {
