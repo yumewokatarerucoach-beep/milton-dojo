@@ -4050,6 +4050,7 @@ function wire(){
     b.addEventListener("click", () => {
       const i = Number(b.dataset.chk);
       checked[i] = !checked[i];
+      keepScroll = true;            // ふりかえりを選んでも画面を上に飛ばさない
       render();
     });
   });
