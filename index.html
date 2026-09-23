@@ -97,6 +97,9 @@ button{font-family:inherit}
   background:var(--accent-soft); border-radius:6px; padding:6px 8px; letter-spacing:.06em}
 .mode b{font-size:1.02rem; font-weight:700}
 .mode span{font-size:.89rem; color:var(--ink-2); line-height:1.65}
+.modes .grp{margin:12px 0 -2px}
+.mode .meta{white-space:nowrap; color:var(--ink-3)}
+.modes .grp:first-child{margin-top:0}
 
 /* ---- timer selector ---- */
 .seg{display:flex; gap:0; border:1px solid var(--line); border-radius:9px; overflow:hidden}
@@ -1013,10 +1016,10 @@ const SEQ = {}; SEQS.forEach(s => SEQ[s.id] = s);
 
 /* ===================== メタモデル：12パターン（原典 第5章に準拠） ===================== */
 const META = [
-  { id:"m01", no:"01", name:"単純削除", cat:"削除",
+  { id:"m01", no:"01", name:"一般削除", cat:"削除",
     def:"重要な情報が完全に失われている。何に対してか、何がかが消えている。",
     ask:"「何に対して〜ですか？」「具体的に何が〜ですか？」",
-    term:"<b>単純削除</b>とは、文から情報がまるごと抜け落ちている状態。「不安です」— 何に対して？ が消えています。",
+    term:"<b>一般削除</b>とは、文から情報がまるごと抜け落ちている状態。「不安です」— 何に対して？ が消えています。",
     checks:["消えている対象を「何に対して？」「何が？」と尋ねているか",
             "相手の言葉（不安・つらい など）をそのまま使って返しているか",
             "「なぜ」で理由を聞いていないか"] },
@@ -1083,20 +1086,20 @@ const META = [
     checks:["相手の言葉（いつも・誰も・みんな）をそのまま返して確かめているか",
             "「一度も？」と、例外を一つ探しにいっているか",
             "反論ではなく、確認の口調になっているか"] },
-  { id:"m11", no:"11", name:"必要性のモダルオペレーター", cat:"一般化",
-    def:"〜せねば、〜しなければならない。選択肢がないことを暗示する言葉。",
-    ask:"「もし、しなかったとしたら、何が起こりますか？」",
-    term:"<b>モダルオペレーター</b>（modal operator）＝話法の助動詞。そのうち行動の<b>必要性</b>を決める言葉（〜ねばならない／〜すべき）。選択肢がないように感じさせます。",
-    checks:["「もし〜しなかったら、何が起こりますか？」と結果を尋ねているか",
-            "義務そのものを否定せずに聞けているか",
-            "「なぜ」を使っていないか"] },
-  { id:"m12", no:"12", name:"可能性のモダルオペレーター", cat:"一般化",
+  { id:"m12", no:"11", name:"可能性のモダルオペレーター", cat:"一般化",
     def:"〜できない、無理、わけがない。自分の可能性を閉ざす言葉。",
     ask:"「何が、あなたを止めているのですか？」「もし可能だとしたら？」",
-    term:"同じく<b>モダルオペレーター</b>のうち、<b>可能性</b>を決める言葉（〜できない／無理／わけがない）。能力の問題に見えて、たいていは「自分に許可していない」だけです。",
+    term:"<b>モダルオペレーター</b>（modal operator）＝話法の助動詞。そのうち<b>可能性</b>を決める言葉（〜できない／無理／わけがない）。能力の問題に見えて、たいていは「自分に許可していない」だけです。",
     checks:["「何があなたを止めているのですか？」と障害を尋ねているか",
             "「もし可能だとしたら？」と仮定で扉を開けているか",
-            "「できますよ」と励ましで押していないか"] }
+            "「できますよ」と励ましで押していないか"] },
+  { id:"m11", no:"12", name:"必要性のモダルオペレーター", cat:"一般化",
+    def:"〜せねば、〜しなければならない。選択肢がないことを暗示する言葉。",
+    ask:"「もし、しなかったとしたら、何が起こりますか？」",
+    term:"同じく<b>モダルオペレーター</b>のうち、行動の<b>必要性</b>を決める言葉（〜ねばならない／〜すべき）。選択肢がないように感じさせます。",
+    checks:["「もし〜しなかったら、何が起こりますか？」と結果を尋ねているか",
+            "義務そのものを否定せずに聞けているか",
+            "「なぜ」を使っていないか"] }
 ];
 const M = {}; META.forEach(m => M[m.id] = m);
 
@@ -1214,7 +1217,7 @@ const MONO = [
         point:"義務を外すのが目的ではない。その義務の裏にある<b>本当の願い</b>を、本人の口から出すための質問。" },
       { q:"それがまた、しんどい", p:"m07",
         models:["お母さまの「ありがとう」が、どのようにして、あなたをしんどくさせるのですか？"],
-        also:"「しんどい」は単純削除（何が、どうしんどいのか）",
+        also:"「しんどい」は一般削除（何が、どうしんどいのか）",
         point:"感謝が苦しいという構造は、本人も説明できていないことが多い。<b>経路を言葉にした瞬間</b>に、扱えるものに変わる。" },
       { q:"何分そうしてたか、分からなくて", p:"m01",
         models:["その時間、何が起きていましたか？","そのあいだ、何を考えていましたか？"],
@@ -2529,50 +2532,54 @@ function render(){
 function homeHTML(){
   const total = store.records.length;
   const weak = weakestIds(3).map(id => P[id].name);
+  const nextText = TEXTS.find(t => !store.read.includes(t.id));   // まだ「読んだ」にしていない最初の章
   return `
   <div style="display:flex;flex-direction:column;gap:20px">
     <p class="muted" style="margin:0">
-      クライアント役の発言に、指定されたミルトンパターンで返す練習と、長い語りをメタモデルで解く練習です。
-      <b style="color:var(--ink)">まず声に出して言ってから、書いてください。</b>
-      目的は覚えることではなく、セッション中に口から出るようにすることです。<br><span style="color:var(--ink-3);font-size:.92em">書くのが面倒なときは、スマホのキーボードのマイクで音声入力できます。</span>
+      NLPを読んで、練習して、振り返る道場です。練習は<b style="color:var(--ink)">まず声に出して言ってから、書きます。</b><br><span style="color:var(--ink-3);font-size:.92em">書くのが面倒なときは、スマホのキーボードのマイクで音声入力できます。</span>
     </p>
 
     <div class="modes">
+      <p class="eyebrow grp">読む</p>
       <button class="mode" data-go="textbook" type="button">
-        <span class="mk">T</span><b>テキスト（読む）</b>
-        <span>NLPの基本を順番に読めます。いま読めるのは0章〜10章（NLPってなに？／前提／TOTE／リフレーミング／ゴール／ラポール／キャリブレーション／表象システム／視線解析／コミュニケーションの要素とステイト／チャンキング）。</span>
+        <span class="mk">T</span><b>テキスト</b>
+        <span>${nextText ? `続きは ${nextText.no}章「${esc(nextText.title)}」` : "ぜんぶ読みました"} <span class="meta">0〜${TEXTS[TEXTS.length-1].no}章</span></span>
       </button>
-      <button class="mode" data-go="single" type="button">
-        <span class="mk">A</span><b>単発ドリル</b>
-        <span>発言ひとつに、指定された1パターンで返す。${PATTERNS.length}種類をひととおり回します。</span>
-      </button>
-      <button class="mode" data-go="stackpick" type="button">
-        <span class="mk">B</span><b>連結ドリル</b>
-        <span>3文つないで、短い誘導のかたまりを組みます。セッションの局面ごとに<b>${SEQS.length}つの型</b>（安心をつくる／深める／抵抗をほどく／リソースを起こす／行動へ渡す／気づきを渡す／その場で動かす／責めをほどく）。実際に使う形はこっち。</span>
-      </button>
+
+      <p class="eyebrow grp">章とセットの練習</p>
       <button class="mode" data-go="reframe" type="button">
         <span class="mk">R</span><b>リフレーミング</b>
-        <span>短所・出来事・苦手な人に、意味と状況の2方向から別の見方を足す練習。${REFRAMES.length}問。3章とセットです。</span>
+        <span>別の見方を足す <span class="meta">${REFRAMES.length}問・3章</span></span>
       </button>
       <button class="mode" data-go="goal" type="button">
         <span class="mk">G</span><b>ゴールを整える</b>
-        <span>クライアントの「こうなりたい」を、5つの条件がそろうように質問で整える練習。${GOALS.length}問。4章とセットです。</span>
+        <span>5つの条件をそろえる <span class="meta">${GOALS.length}問・4章</span></span>
       </button>
       <button class="mode" data-go="vak" type="button">
         <span class="mk">V</span><b>感覚の言葉</b>
-        <span>相手の言葉から「見る・聞く・感じる」を聞き分けて、同じ感覚の言葉で返す練習。${VAKS.length}問。7章とセットです。</span>
+        <span>同じ感覚の言葉で返す <span class="meta">${VAKS.length}問・7章</span></span>
       </button>
       <button class="mode" data-go="chunk" type="button">
         <span class="mk">C</span><b>チャンキング</b>
-        <span>相手のひとことを、上げる・下げる・横に広げるのどこへ動かすか見立てて、その質問を作る練習。${CHUNKS.length}問。10章とセットです。</span>
+        <span>上げる・下げる・横に広げる <span class="meta">${CHUNKS.length}問・10章</span></span>
+      </button>
+
+      <p class="eyebrow grp">言葉の練習</p>
+      <button class="mode" data-go="single" type="button">
+        <span class="mk">A</span><b>単発ドリル</b>
+        <span>ミルトン${PATTERNS.length}パターンで返す</span>
+      </button>
+      <button class="mode" data-go="stackpick" type="button">
+        <span class="mk">B</span><b>連結ドリル</b>
+        <span>3文でつなぐ <span class="meta">${SEQS.length}つの型</span></span>
       </button>
       <button class="mode" data-go="metapick" type="button">
-        <span class="mk">M</span><b>メタモデル（長文ワーク）</b>
-        <span>長い語りの中から、省略・歪曲・一般化を見つけて回復質問を作ります。ミルトンモデルの裏返し。語り${MONO.length}本・${MONO.reduce((n,m)=>n+m.spots.length,0)}か所。</span>
+        <span class="mk">M</span><b>メタモデル</b>
+        <span>長い語りから見つける <span class="meta">${MONO.length}本</span></span>
       </button>
       <button class="mode" data-go="weak" type="button">
         <span class="mk">W</span><b>弱点優先</b>
-        <span>${total ? `手が薄いパターンから優先して出します。次に伸びるのは ${esc(weak.join(" / "))}。` : "まだ記録がないので、まずは未着手のパターンから出します。"}</span>
+        <span>手が薄いパターンから出す${total && weak.length ? ` <span class="meta">次は ${esc(weak[0])}</span>` : ""}</span>
       </button>
     </div>
 
@@ -3056,7 +3063,7 @@ const TEXTS = [
 <div class="kv"><span class="k">ひとことで</span><span class="v">過去に起きた出来事は、後から変えられません。でも、それを「どう思い出すか」「どう受け止めるか」は、自分で変えられます。</span></div>
 <div class="kv"><span class="k">たとえば</span><span class="v">みんなの前で失敗したこと。「恥ずかしかった出来事」として思い出すと、今も嫌な気持ちになります。「あれで度胸がついた」と思い出すと、気持ちは軽くなります。起きた出来事は同じです。</span></div>
 <div class="kv"><span class="k">コーチングの場面で</span><span class="v">「何があったのか」を何度も聞くより、「その出来事を、今どう感じているか」に目を向けます。</span></div>
-<div class="kv"><span class="k">つながり</span><span class="v">リフレーミング、サブモダリティ（準備中）</span></div>
+<div class="kv"><span class="k">つながり</span><span class="v"><button class="linkbtn" data-text="t3" type="button">3章「リフレーミング」を読む →</button>　<button class="linkbtn" data-text="t11" type="button">11章「サブモダリティ」を読む →</button></span></div>
 </div></details>
 <details class="ref pp"><summary><span class="no">02</span>相手にどう伝わったかが、伝えたことの結果になる</summary><div class="body">
 <div class="kv"><span class="k">むずかしく言うと</span><span class="v">コミュニケーションの意味は、あなたが受け取る反応にある</span></div>
@@ -3070,7 +3077,7 @@ const TEXTS = [
 <div class="kv"><span class="k">ひとことで</span><span class="v">私たちが感じていることは、「見える」「聞こえる」「体で感じる」「匂い」「味」のどれかで言い表せます。</span></div>
 <div class="kv"><span class="k">たとえば</span><span class="v">「何となく不安」も、よく聞いてみると「胸のあたりが重い」「失敗する場面が頭に浮かぶ」のように、五感の言葉で言えるようになります。</span></div>
 <div class="kv"><span class="k">コーチングの場面で</span><span class="v">ぼんやりした悩みを、「何が見える？」「何が聞こえる？」「体のどこで感じる？」と聞いて、はっきりさせていきます。</span></div>
-<div class="kv"><span class="k">つながり</span><span class="v"><button class="linkbtn" data-text="t7" type="button">7章「表象システム」を読む →</button>　サブモダリティ（準備中）</span></div>
+<div class="kv"><span class="k">つながり</span><span class="v"><button class="linkbtn" data-text="t7" type="button">7章「表象システム」を読む →</button>　<button class="linkbtn" data-text="t11" type="button">11章「サブモダリティ」を読む →</button></span></div>
 </div></details>
 <details class="ref pp"><summary><span class="no">04</span>変わるための力は、もう自分の中にある</summary><div class="body">
 <div class="kv"><span class="k">むずかしく言うと</span><span class="v">人が変化を起こすために必要なリソースは、すでにその人の中にある</span></div>
@@ -3084,7 +3091,7 @@ const TEXTS = [
 <div class="kv"><span class="k">ひとことで</span><span class="v">人は、現実の世界をそのまま見ているのではありません。自分の目や耳、思い込みを通して、頭の中に作った「地図」を見ています。</span></div>
 <div class="kv"><span class="k">たとえば</span><span class="v">同じ雨の日でも、遠足の日の子どもには「最悪」、畑を作っている人には「ありがたい」。雨は同じなのに、頭の中の地図が違います。</span></div>
 <div class="kv"><span class="k">コーチングの場面で</span><span class="v">相手の話を「本当にあったこと」ではなく「その人の地図」として聴きます。地図が間違っていると言わずに、まだ地図に載っていない道を一緒に探します。</span></div>
-<div class="kv"><span class="k">つながり</span><span class="v"><button class="linkbtn" data-text="t10" type="button">10章「チャンキング」を読む →</button>　メタモデル（準備中）<br><button class="linkbtn" data-go="metapick" type="button">メタモデルの長文ワークで練習する →</button></span></div>
+<div class="kv"><span class="k">つながり</span><span class="v"><button class="linkbtn" data-text="t10" type="button">10章「チャンキング」を読む →</button>　<button class="linkbtn" data-text="t12" type="button">12章「メタモデル」を読む →</button><br><button class="linkbtn" data-go="metapick" type="button">メタモデルの長文ワークで練習する →</button></span></div>
 </div></details>
 <details class="ref pp"><summary><span class="no">06</span>人の大切さは変わらない。見直すのは行動</summary><div class="body">
 <div class="kv"><span class="k">むずかしく言うと</span><span class="v">人の肯定的な価値は一定。問われるのは、その反応がふさわしいかどうか</span></div>
@@ -3610,7 +3617,148 @@ const TEXTS = [
 
 <p>この章の練習は、トップの「C チャンキング」から回せます。相手のひとことをどちらへ動かすか見立てて、その質問を作る練習です。<br><button class="linkbtn" data-go="chunk" type="button">チャンキングのドリルへ →</button></p>
 
-<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>チャンキングの意味、扱うサイズは人それぞれで「地図は領土ではない」につながること、チャンクアップ（一般化・全体的）・チャンクダウン（具体化・部分的）・水平チャンク（並列）の3つ、上げる質問「なんのために？」「何か手に入るのか」、下げる質問「具体的に何か？」、ワークの流れは教科書に沿っています。ペットのたとえ、横に広げる質問の言い方、コーチングの場面、ドリルの発言と質問例、ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` }
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>チャンキングの意味、扱うサイズは人それぞれで「地図は領土ではない」につながること、チャンクアップ（一般化・全体的）・チャンクダウン（具体化・部分的）・水平チャンク（並列）の3つ、上げる質問「なんのために？」「何か手に入るのか」、下げる質問「具体的に何か？」、ワークの流れは教科書に沿っています。ペットのたとえ、横に広げる質問の言い方、コーチングの場面、ドリルの発言と質問例、ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` },
+  { id:"t11", no:"11", title:"サブモダリティ・対照分析", min:9, body:`<div class="hitokoto">同じ「見える」でも、明るいか暗いか、近いか遠いかで、感じ方は変わります。この<b>感覚の細かい違い</b>を扱うのが、サブモダリティです。</div>
+
+<h3>サブモダリティとは</h3>
+<p>7章で、人は「見る（V）・聞く（A）・感じる（K）」で世界をとらえていると学びました。この一つひとつの感覚を<b>さらに細かく分けた要素</b>が、サブモダリティです。<br><button class="linkbtn" data-text="t7" type="button">7章「表象システム」を読み返す →</button></p>
+<p>たとえば、楽しかった旅行を思い出してください。その場面は明るいですか、暗いですか。近くに見えますか、遠くに見えますか。カラーですか、白黒ですか。こうした<b>「どんなふうに」</b>の部分が、サブモダリティです。</p>
+<p>サブモダリティが変わると、<b>同じ出来事への感じ方が変わることがあります</b>。どの要素がどれくらい効くかは、人によって違います。</p>
+
+<h3>2つのタイプ</h3>
+<div class="kvs">
+<div class="kv"><span class="k">アナログ</span><span class="v">音量つまみや明かりの調光のように、<b>少しずつ</b>変えられるもの。明るさ・大きさ・音量・温度など。速くもゆっくりも変えられます。</span></div>
+<div class="kv"><span class="k">デジタル</span><span class="v">オンかオフか、のように<b>切り替わる</b>もの。カラーか白黒か、動画か静止画か、など。</span></div>
+</div>
+<p>デジタルの中でも大事なのが、この2つです。</p>
+<div class="kvs">
+<div class="kv"><span class="k">アソシエイト</span><span class="v">その場面に<b>入りこんで、自分の目で見ている</b>状態。感じ方が強く、主観的になります。</span></div>
+<div class="kv"><span class="k">ディソシエイト</span><span class="v">その場面から<b>離れて、自分の姿を外から眺めている</b>状態。落ち着いて、客観的に見やすくなります。</span></div>
+</div>
+
+<h3>どんな要素があるか</h3>
+<div class="kvs">
+<div class="kv"><span class="k">見る（V）</span><span class="v">形／大きさ／距離（近い・遠い）／位置（上下・左右）／明るさ／動画か静止画か／カラーか白黒か／アソシエイトかディソシエイトか／立体か平面か／イメージの数／ふちがあるか、ないか</span></div>
+<div class="kv"><span class="k">聞く（A）</span><span class="v">音量／音色（トーン）／テンポ／音の高さ／リズム／ステレオかモノラルか／続く長さ／距離（近い・遠い）／位置（上下・左右）／強さ</span></div>
+<div class="kv"><span class="k">感じる（K）</span><span class="v">位置（体の内側か外側か）／向き（上下・左右）／さわった感じ・質感／重さ／温度／呼吸／動き</span></div>
+</div>
+
+<h3>対照分析 ― 2つの体験を並べて比べる</h3>
+<p>対照分析は、<b>2つの体験を並べて、サブモダリティの違いを見つける</b>方法です。よく使うのは「うまくいく体験」と「苦手な体験」の組み合わせです。</p>
+<p>比べてみると、その人にとって<b>「うまくいく感じ」をつくっている手がかり</b>が見えてきます。ここでは出来事の中身より、<b>感じ方の形</b>に注目するのがポイントです。</p>
+
+<h3>やり方の流れ ― 例：会議で発言するのが苦手</h3>
+<p>比べて違いが分かったら、苦手な感覚を、得意な感覚に変えていきます。全体を通して、<b>相手のペースに合わせながら</b>進めます。<br><button class="linkbtn" data-text="t5" type="button">5章「ラポール」を読む →</button></p>
+<div class="kvs">
+<div class="kv"><span class="k">① 苦手を聞く</span><span class="v">「苦手なことは何ですか？」「そのとき、どんな感覚がありますか？」「体では、どう感じますか？」<br><span style="color:var(--ink-3)">例：会議で発言するとき。お腹のあたりが固くなる。</span></span></div>
+<div class="kv"><span class="k">② 得意を聞く</span><span class="v">「反対に、得意なこと、楽にできることは何ですか？」<br><span style="color:var(--ink-3)">例：仲のいい友だちと話しているとき。</span></span></div>
+<div class="kv"><span class="k">③ 目の前に出す</span><span class="v">「その感覚を、あえて目の前に出すとしたら、どんな色・形・大きさですか？ さわった感じ・温度・重さは？」苦手と得意、それぞれに聞きます。</span></div>
+</div>
+<p>③で出てきた2つの感覚を並べると、たとえばこうなります。</p>
+<div class="kvs">
+<div class="kv"><span class="k">色</span><span class="v">苦手：灰色<br>得意：あたたかいオレンジ色</span></div>
+<div class="kv"><span class="k">形・大きさ</span><span class="v">苦手：両手いっぱいの、ゴツゴツした塊<br>得意：手のひらにのる、まるい玉</span></div>
+<div class="kv"><span class="k">さわった感じ</span><span class="v">苦手：固い<br>得意：やわらかい</span></div>
+<div class="kv"><span class="k">温度</span><span class="v">苦手：冷たい<br>得意：ほんのりあたたかい</span></div>
+<div class="kv"><span class="k">重さ</span><span class="v">苦手：ずっしり重い<br>得意：ふわっと軽い</span></div>
+</div>
+<div class="kvs">
+<div class="kv"><span class="k">④ 得意に変える</span><span class="v">目の前の苦手な感覚を、得意な感覚の色・形・重さへ変えていきます。コーチは迷わず、流れるように言い切ります。<br><span style="color:var(--ink-3)">例：「その灰色の塊が、だんだんオレンジ色に変わっていきます。まるく、やわらかく、軽くなっていきます」</span></span></div>
+<div class="kv"><span class="k">⑤ 確かめる</span><span class="v">「さっきの苦手なこと（会議で発言する場面）を思い出して、あの感覚になろうとしてみてください」<br><span style="color:var(--ink-3)">前ほどその感覚にならなければ、感じ方が変わったサインです。</span></span></div>
+<div class="kv"><span class="k">⑥ 未来へ</span><span class="v">「これからどのように行動していこうとする自分がいますか？」次の行動を聞きます（未来ペーシング）。<br><span style="color:var(--ink-3)">例：次の会議では、最初にひとこと、自分の意見を言ってみる。</span></span></div>
+</div>
+<p>④の「言い切る」言葉の使い方は、13章のミルトンモデル（準備中）で学びます。</p>
+
+<h3>コーチングの場面で</h3>
+<ul>
+<li><b>「どんな感じ？」の先を聞く。</b>「その場面は明るいですか、暗いですか」「近いですか、遠いですか」と聞くと、ぼんやりした気持ちが扱える形になります</li>
+<li><b>相手の言葉に出るサブモダリティを拾う。</b>「目の前が真っ暗」「重くのしかかる」「遠い話に感じる」。こうした言い方には、その人の感じ方の形がそのまま出ています</li>
+<li><b>出来事の中身を、くわしく聞き出さなくていい。</b>感じ方の形を聞くだけでも、話は進みます。話したくないことを話させずに済みます</li>
+<li><b>変わらなくても、責めない。</b>どの要素が効くかは人によって違います。色で変わらなければ、重さや温度など、別の要素を試します</li>
+<li><b>「ちょっと苦手」から始める。</b>つらい記憶や、心の傷になっている出来事には使いません。そうした話は、医療などの専門家につなぎます</li>
+</ul>
+
+<h3>ふり返ってみよう</h3>
+<div class="kvs">
+<div class="kv"><span class="k">問い 1</span><span class="v">楽しかった思い出を一つ浮かべてください。明るさ・大きさ・距離・色は、それぞれどうなっていますか。</span></div>
+<div class="kv"><span class="k">問い 2</span><span class="v">その場面の明るさを少しだけ上げたり、写真を少し遠ざけたりしてみてください。感じ方に違いはありましたか。変わらなくてもかまいません。</span></div>
+<div class="kv"><span class="k">問い 3</span><span class="v">「ちょっと苦手なこと」と「得意なこと」を一つずつ選んで、①〜③を自分に聞いてみてください。2つの感覚は、色・形・重さでどう違いましたか。</span></div>
+</div>
+
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>サブモダリティの意味、アナログとデジタルの2つのタイプ、アソシエイト／ディソシエイト、視覚・聴覚・身体感覚の要素の一覧、2つの体験を並べて比べる対照分析の形は教科書に沿っています。苦手と得意を聞いて感覚を変えていく流れ（①〜⑥）は、講座で学んだ手順をもとに、このアプリの言葉でまとめました。対照分析の説明の言い方、会議の例、コーチングの場面、ふり返りの問いは、このアプリで作りました。サブモダリティを変えたときの感じ方の変化は人によって違うため、このアプリでは「変わることがある」と紹介しています。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` },
+  { id:"t12", no:"12", title:"メタモデル", min:12, body:`<div class="hitokoto">人は話すとき、知らないうちに情報を<b>省いたり、ゆがめたり、ひとまとめにしたり</b>しています。質問で、抜け落ちた情報を取り戻す。それがメタモデルです。</div>
+
+<h3>メタモデルとは</h3>
+<p>人は、見たり聞いたりしたことを、自分のフィルターを通して受け取ります。このとき情報の一部が<b>削除</b>され、<b>歪曲</b>され、<b>一般化</b>されます。言葉にして外に出すときも、同じことが起きます。<br><button class="linkbtn" data-text="t7" type="button">7章「表象システム」を読み返す →</button></p>
+<p>こうして情報が欠けてしまった言葉を<b>メタモデルパターン</b>と呼びます。そこに質問をして、抜け落ちた情報を取り戻す（回復させる）のがメタモデルです。</p>
+<p>情報が戻ってくると、相手は自分の状況をはっきり見られるようになります。自分の持っている力（リソース）に気づいたり、必要なものとそうでないものを分けたりしやすくなります。</p>
+
+<h3>何のために使うか</h3>
+<ul>
+<li><b>はっきりさせる</b>（ゴールなど）</li>
+<li><b>具体的にする</b></li>
+<li><b>必要なものと、必要でないものを分ける</b></li>
+<li><b>必要でない思い込み（ビリーフ）を変える</b></li>
+<li><b>進む方向を決める</b></li>
+<li><b>リソースに目を向ける</b></li>
+</ul>
+
+<h3>12のパターン</h3>
+<p class="note" style="margin:0 0 10px">「例」は相手の言葉、「→」はそれに返す回復質問です。</p>
+<p><b>削除 ― 情報が抜けている</b></p>
+<div class="kvs">
+<div class="kv"><span class="k">一般削除</span><span class="v">例「不安です」<br>→「何に対して、不安ですか？」</span></div>
+<div class="kv"><span class="k">比較削除</span><span class="v">例「もっと頑張らないと」<br>→「何と比べて、もっとですか？」</span></div>
+<div class="kv"><span class="k">指示詞の欠如</span><span class="v">例「上から言われたんです」<br>→「具体的に、誰に言われたのですか？」</span></div>
+<div class="kv"><span class="k">不特定動詞</span><span class="v">例「ちゃんと準備したんです」<br>→「具体的に、どのように準備したのですか？」</span></div>
+</div>
+<p><b>歪曲 ― 意味がゆがんでいる</b></p>
+<div class="kvs">
+<div class="kv"><span class="k">名詞化</span><span class="v">例「コミュニケーションがうまくいかない」<br>→「誰と、どのように話すことが、うまくいかないのですか？」</span></div>
+<div class="kv"><span class="k">複合等価</span><span class="v">例「返信が遅いのは、嫌われてるってことです」<br>→「返信が遅い＝嫌われている、なんですね。あなたがすぐに返信できなかったとき、その相手を嫌っていましたか？」</span></div>
+<div class="kv"><span class="k">因果関係</span><span class="v">例「あの人のせいで、やる気がなくなった」<br>→「あの人の言動をどう解釈したから、やる気がなくなったと言えるのでしょうか？」</span></div>
+<div class="kv"><span class="k">マインド・リーディング</span><span class="v">例「上司は、私に期待していない」<br>→「どうやって、それが分かるのですか？」</span></div>
+<div class="kv"><span class="k">ロスト・パフォーマティブ</span><span class="v">例「失敗するのは、よくないことだ」<br>→「誰にとって、よくないことなのですか？」</span></div>
+</div>
+<p><b>一般化 ― ひとまとめにしている</b></p>
+<div class="kvs">
+<div class="kv"><span class="k">全称限定詞</span><span class="v">例「いつも失敗する」<br>→「いつも？ うまくいったことは、一度もありませんか？」</span></div>
+<div class="kv"><span class="k">可能性のモダルオペレーター</span><span class="v">例「人前で話すなんて、私には無理です」<br>→「何が、あなたを止めているのですか？」</span></div>
+<div class="kv"><span class="k">必要性のモダルオペレーター</span><span class="v">例「毎日やらなければならない」<br>→「もし、やらなかったとしたら、何が起こりますか？」</span></div>
+</div>
+<p class="note">文の中に、言葉にされないまま入っている思い込み（前提）も、一般化の仲間として扱うことがあります。前提は、13章のミルトンモデル（準備中）で詳しく学びます。</p>
+
+<h3>「なぜ」は、基本的に使わない</h3>
+<p>「なぜ？」と聞かれると、人は責められているように感じ、言い訳が出てきやすくなります。代わりに<b>「何が」「どのように」「何と比べて」</b>で聞きます。</p>
+<p>ただし「なぜ」は、その人の<b>動機</b>を引き出す質問でもあります。目標や大事にしていること、やる気について聞くときには、あえて使うと効くことがあります。</p>
+
+<h3>ミルトンモデルとの関係</h3>
+<p>メタモデルは、情報を取り戻して<b>具体的にする</b>言葉の使い方です。ミルトンモデルはその反対で、<b>あえて情報をぼかす</b>ことで、相手が自分の体験で空白を埋められるようにします。トップの「A 単発ドリル」「B 連結ドリル」は、ミルトンモデルの側の練習です。</p>
+
+<h3>コーチングの場面で</h3>
+<ul>
+<li><b>全部を回復させようとしない。</b>一度にいくつも聞くと、取り調べのようになります。ゴールや、相手を止めているものなど、大事なところだけ聞きます</li>
+<li><b>相手の言葉をそのまま使って聞く。</b>「不安」と言われたら、「その不安は、何に対してですか？」と、同じ言葉で返します</li>
+<li><b>ラポールがあってこそ。</b>信頼がないうちに鋭く聞くと、責められているように感じます<br><button class="linkbtn" data-text="t5" type="button">5章「ラポール」を読む →</button></li>
+<li><b>ゴールを整えるときに使う。</b>ぼんやりしたゴールは、削除や名詞化だらけです。回復質問で、見える形にしていきます<br><button class="linkbtn" data-text="t4" type="button">4章「よくまとめられたゴール」を読む →</button></li>
+<li><b>相手の地図を否定しない。</b>「それは違いますよ」ではなく、まだ地図に載っていない情報を一緒に探します</li>
+</ul>
+
+<h3>人と組んでやるワーク</h3>
+<ul>
+<li><b>書き出して、質問する</b>（2〜3人）… 身の回りでよく聞く「情報が欠けた言葉」を、話し合いながら書き出す。書き出した言葉に、メタモデルで質問してみる</li>
+</ul>
+
+<h3>ふり返ってみよう</h3>
+<div class="kvs">
+<div class="kv"><span class="k">問い 1</span><span class="v">最近あなたが口にした「いつも」「みんな」「〜しなきゃ」を、一つ思い出してください。どのパターンに当たりますか。</span></div>
+<div class="kv"><span class="k">問い 2</span><span class="v">その言葉に、自分で回復質問をしてみてください。何が出てきましたか。</span></div>
+<div class="kv"><span class="k">問い 3</span><span class="v">あなたがつい「なぜ？」と聞いてしまうのは、どんな場面ですか。「何が」「どのように」に言いかえると、どうなりますか。</span></div>
+</div>
+
+<p>この章の練習は、トップの「M メタモデル」から回せます。長い語りの中から削除・歪曲・一般化を見つけて、回復質問を作る練習です。<br><button class="linkbtn" data-go="metapick" type="button">メタモデルの長文ワークへ →</button></p>
+
+<div class="srcbox">出典：『NLPプラクティショナー』テキスト（米国NLP協会™ NLP創始者認定講座）<br>メタモデルの意味、削除・歪曲・一般化とフィルターの考え方、メタモデルパターンと情報の回復、目的の6つ、12のパターンの名前と3つの分け方、回復質問の型、「なぜ」を基本的に使わない理由とあえて使う場合、ミルトンモデルとの関係、ワークの流れは教科書に沿っています。パターンの数え方は講座の資料に合わせ、モダルオペレーターを可能性と必要性の2つに分けています。例文と回復質問の言い方、コーチングの場面、ふり返りの問いは、このアプリで作りました。<br>※このアプリは個人が作った練習用で、講座や協会の公式のものではありません。</div>` }
 ];
 
 /* ---- 8章の視線の図（自分の目／向かい合った相手 を切り替える） ---- */
